@@ -36,15 +36,15 @@
       return;
     }
 
-    var curhd = parseInt(hd.get("current"));
-    var maxhp = parseInt(hp.get("max"));
-    var curhp = parseInt(hp.get("current"));
+    var cur_hd = Number(hd.get("current"));
+    var max_hp = Number(hp.get("max"));
+    var cur_hp = Number(hp.get("current"));
 
-    if (curhd === 0) {
+    if (cur_hd === 0) {
       sendRollTemplate(msg.who, name + " has no hit dice remaining.");
       return;
     }
-    if (curhp === maxhp) {
+    if (cur_hp === max_hp) {
       sendRollTemplate(msg.who, name + " already at full hit points, no hit dice used.");
       return;
     }
@@ -55,8 +55,8 @@
       return;
     }
 
-    hd.set({ current: curhd - 1 });
-    hp.set({ current: Math.min(maxhp, curhp + result) });
+    hd.set({ current: cur_hd - 1 });
+    hp.set({ current: Math.min(max_hp, cur_hp + result) });
   };
 
   var isHitDiceMessage = function (msg) {
