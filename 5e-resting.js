@@ -1,16 +1,132 @@
 /* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj */
 
-(function () {
-  var regainedShortRest = ["Second Wind", "Action Surge", "Superiority Dice", "Channel Divinity"];
-  var optionalShortRest = ["Arcane Recovery"];
+// TODO: [l] and [s]
+// TODO: Mystic Arcanum (Warlock), Signature Spells (Wizard), Drow Magic and Infernal Legacy (Tiefling)
+// TODO: Reminders of rest-time abilities like Song of Rest (Bard) and Portent (Wizard)
 
-  var regainedLongRest = ["Lay on Hands", "Divine Sense", "Arcane Recovery"].concat(regainedShortRest);
+(function () {
+  var regained = function (_) { return "regained"; };
+  var consider = function (_) { return "consider"; };
+
+  var getClassLevel = function (charId, className) {
+    var s = getAttrByName(charId, 'class_display');
+    if (s) {
+      var m = s.match(new RegExp(className + " (\\d+)"));
+      if (m && m.length > 0 && m[1]) {
+        return Number(m[1]);
+      }
+    }
+    return 0;
+  };
+
+  var afterClassLevel = function (className, minLevel, result) {
+    return function (charId) {
+      if (minLevel <= getClassLevel(charId, className)) {
+        return result;
+      }
+    };
+  };
+
+  var resources = {
+    // Barbarian
+    "Rage": {longRest: regained},
+    "Consult the Spirits": {longRest: regained},
+
+    // Bard
+    "Bardic Inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
+
+    // Cleric
+    "Channel Divinity": {longRest: regained, shortRest: regained},
+    "Divine Intervention": {longRest: regained},
+    "Warding Flare": {longRest: regained},
+    "Wrath of the Storm": {longRest: regained},
+    "War Priest": {longRest: regained},
+
+    // Druid
+    "Wild Shape": {longRest: regained, shortRest: regained},
+    "Natural Recovery": {longRest: regained},
+
+    // Fighter
+    "Second Wind": {longRest: regained, shortRest: regained},
+    "Action Surge": {longRest: regained, shortRest: regained},
+    "Superiority Dice": {longRest: regained, shortRest: regained},
+    "Indomitable": {longRest: regained},
+
+    // Monk
+    "Ki": {longRest: regained, shortRest: regained},
+    "Wholeness of Body": {longRest: regained},
+
+    // Paladin
+    "Divine Sense": {longRest: regained},
+    "Lay on Hands": {longRest: regained},
+    "Cleansing Touch": {longRest: regained},
+    "Holy Nimbus": {longRest: regained},
+    "Undying Sentinel": {longRest: regained},
+    "Elder Champion": {longRest: regained},
+    "Avenging Angel": {longRest: regained},
+
+    // Rogue
+    "Stroke of Luck": {longRest: regained, shortRest: regained},
+    "Spell Thief": {longRest: regained},
+
+    // Sorcerer
+    "Sorcery Points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
+    "Tides of Chaos": {longRest: regained},
+
+    // Warlock
+    "Hexblade’s Curse": {longRest: regained, shortRest: regained},
+    "Accursed Specter": {longRest: regained},
+    "Eldritch Master": {longRest: regained},
+    "Fey Presence": {longRest: regained, shortRest: regained},
+    "Misty Escape": {longRest: regained, shortRest: regained},
+    "Dark Delirium": {longRest: regained, shortRest: regained},
+    "Dark One's Own Luck": {longRest: regained, shortRest: regained},
+    "Hurl Through Hell": {longRest: regained},
+    "Entropic Ward": {longRest: regained, shortRest: regained},
+
+    // Wizard
+    "Arcane Recovery": {longRest: regained, shortRest: consider},
+    "Arcane Ward": {longRest: regained},
+    "Benign Transposition": {longRest: regained},
+    "The Third Eye": {longRest: regained, shortRest: regained},
+    "Illusory Self": {longRest: regained, shortRest: regained},
+    "Shapechanger": {longRest: regained, shortRest: regained},
+
+    // Race abilities
+    "Breath Weapon": {longRest: regained}, // Dragonborn
+    "Relentless Endurance": {longRest: regained}, // Half-orc
+    "Githyanki Psionics": {longRest: regained}  // Githyaki
+  };
+
+  var warlockPactMagic = [
+    null,                   // Warlock 0
+    {slots: 1, level: 1},   // Warlock 1
+    {slots: 2, level: 1},   // Warlock 2
+    {slots: 2, level: 2},   // Warlock 3
+    {slots: 2, level: 2},   // Warlock 4
+    {slots: 2, level: 3},   // Warlock 5
+    {slots: 2, level: 3},   // Warlock 6
+    {slots: 2, level: 4},   // Warlock 7
+    {slots: 2, level: 4},   // Warlock 8
+    {slots: 2, level: 5},   // Warlock 9
+    {slots: 2, level: 5},   // Warlock 10
+    {slots: 3, level: 5},   // Warlock 11
+    {slots: 3, level: 5},   // Warlock 12
+    {slots: 3, level: 5},   // Warlock 13
+    {slots: 3, level: 5},   // Warlock 14
+    {slots: 3, level: 5},   // Warlock 15
+    {slots: 3, level: 5},   // Warlock 16
+    {slots: 4, level: 5},   // Warlock 17
+    {slots: 4, level: 5},   // Warlock 18
+    {slots: 4, level: 5},   // Warlock 19
+    {slots: 4, level: 5},   // Warlock 20
+  ];
 
   function showStatus(msg) {
     sendChat("Status", msg, null, {noarchive:true});
   }
 
-  function checkResources(charId, attr, actions, suggestions, regained, optional) {
+  function checkResource(charId, attr, actions, suggestions, restType) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") { return; }
 
     try {
@@ -18,13 +134,16 @@
     } catch (e) {
       return;
     }
-    if (!name) { return; }
+    if (!name || !resources[name] || !resources[name][restType]) { return; }
+
+    var result = resources[name][restType](charId);
+    if (!result) { return; }
 
     var value = Number(attr.get('current'));
     var max = Number(attr.get('max'));
 
-    if (regained.indexOf(name) !== -1) {
-      if (value !== max) {
+    if (result == "regained") {
+      if (value < max) {
         attr.set({ current: max });
         if (max == 1) {
           actions.push(name + " regained.");
@@ -32,21 +151,28 @@
           actions.push(`${name} regained (${value}->${max}).`);
         }
       }
+      return;
     }
 
-    if (optional.indexOf(name) !== -1) {
+    if (result == "consider") {
       if (value > 0) {
         suggestions.push("Consider using " + name + ".");
       }
+      return;
     }
-  }
 
-  function checkResourceShortRest(charId, attr, actions, suggestions) {
-    checkResources(charId, attr, actions, suggestions, regainedShortRest, optionalShortRest);
-  }
-
-  function checkResourceLongRest(charId, attr, actions, suggestions) {
-    checkResources(charId, attr, actions, suggestions, regainedLongRest, []);
+    if (result > 0) {
+      if (value < max) {
+        var newVal = Math.min(max, value + result);
+        attr.set({ current: newVal });
+        if (max == 1) {
+          actions.push(name + " regained.");
+        } else {
+          actions.push(`${name} regained (${value}->${newVal}).`);
+        }
+      }
+      return;
+    }
   }
 
   function findResourceAttrs(charId) {
@@ -71,12 +197,30 @@
     })[0];
   }
 
-  function verified(token, attr, name) {
+  function verifiedCurAndMax(token, attr, name) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") {
       showStatus(name + " attribute on " + token.get("name") + " is missing or current/max values are not filled out, skipped.");
       return false;
     }
     return true;
+  }
+
+  function regainSpellSlots(charId, spellLevel, toRegain, actions) {
+    var charslotmax = getAttr(charId, "lvl" + spellLevel + "_slots_total");
+    var charslot = getAttr(charId, "lvl" + spellLevel + "_slots_expended");
+
+    if (!charslotmax || !charslot) { return; }
+    if (charslotmax.get("current") === "" || charslot.get("current") === "") { return; }
+
+    var cur_slots = Number(charslot.get("current"));
+    var max_slots = Number(charslotmax.get("current"));
+
+    var new_slots = toRegain == "regained" ? max_slots : Math.min(max_slots, cur_slots + toRegain);
+
+    if(cur_slots < new_slots) {
+      actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}->${new_slots}).`);
+      charslot.set({current: new_slots});
+    }
   }
 
   function shortRest(token) {
@@ -85,8 +229,8 @@
     var hd = getAttr(charId, "hit_dice");
     var hp = getAttr(charId, "hp");
 
-    if (!verified(token, hd, 'Hit dice')) { return; }
-    if (!verified(token, hp, 'Hit points')) { return; }
+    if (!verifiedCurAndMax(token, hd, 'Hit dice')) { return; }
+    if (!verifiedCurAndMax(token, hp, 'Hit points')) { return; }
 
     var max_hp = parseInt(hp.get("max"));
     var cur_hp = parseInt(hp.get("current"));
@@ -105,9 +249,16 @@
       }
     }
 
+    // Warlock Pact Magic
+    var warlockLevel = getClassLevel(charId, "Warlock");
+    if (warlockLevel > 0) {
+      var magic = warlockPactMagic[warlockLevel];
+      regainSpellSlots(charId, magic.level, magic.slots, actions);
+    }
+
     // Regain resources
     findResourceAttrs(charId).forEach(function (attr) {
-      checkResourceShortRest(charId, attr, actions, suggestions);
+      checkResource(charId, attr, actions, suggestions, 'shortRest');
     });
 
     // Notify player
@@ -124,8 +275,8 @@
     var hd = getAttr(charId, "hit_dice");
     var hp = getAttr(charId, "hp");
 
-    if (!verified(token, hd, 'Hit dice')) { return; }
-    if (!verified(token, hp, 'Hit points')) { return; }
+    if (!verifiedCurAndMax(token, hd, 'Hit dice')) { return; }
+    if (!verifiedCurAndMax(token, hp, 'Hit points')) { return; }
 
     var max_hp = Number(hp.get("max"));
     var cur_hp = Number(hp.get("current"));
@@ -160,24 +311,12 @@
 
     // Regain spell slots
     for (var i = 1; i < 10; i++) {
-      var charslotmax = getAttr(charId, "lvl" + i + "_slots_total");
-      var charslot = getAttr(charId, "lvl" + i + "_slots_expended");
-
-      if (!charslotmax || !charslot) { continue; }
-      if (charslotmax.get("current") === "" || charslot.get("current") === "") { continue; }
-
-      var cur_slots = Number(charslot.get("current"));
-      var max_slots = Number(charslotmax.get("current"));
-
-      if(cur_slots < max_slots) {
-        actions.push(`Level ${i} spell slots regained (${cur_slots}->${max_slots}).`);
-        charslot.set({current: max_slots});
-      }
+      regainSpellSlots(charId, i, "regained", actions);
     };
 
     // Regain resources
     findResourceAttrs(charId).forEach(function (attr) {
-      checkResourceLongRest(charId, attr, actions, suggestions);
+      checkResource(charId, attr, actions, suggestions, 'longRest');
     });
 
     // Notify player
