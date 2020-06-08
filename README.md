@@ -65,7 +65,24 @@ with "[s]", then it is reset every short and long rest.
 Also: Please let me know if I have missed any skills in the official source
 books, I'll happily add the support.
 
-### Missing features
+### What about items with randomly regained charges?
+
+Let's look at Wand of Magic Missiles. The wand regains 1d6+1 expended charges
+daily at dawn. We can approximate that by tying it to a long rest like this:
+
+```
+Wand of Magic Missiles [l+1d6+1]
+```
+
+The first character in the brackets is a lower case L, meaning it will trigger
+after a long rest. The `+1d6+1` is rolled and added to the resource (up to the
+maximum).
+
+You can replace the `l` with an `s` to trigger after a short rest. Thanks to
+@keithcurtis1 who did this first in his [Rest and
+Recovery](https://app.roll20.net/forum/post/8652406/script-rest-and-recovery)-script.
+
+### Skills that let you use spells without spell slots
 
 There are some skills that give characters access to spells that can be used
 once a day without using spell slots:
@@ -84,4 +101,5 @@ adding the [l] postfix to a resource box, like this:
 
     Mystic Arcanum: Eyebite [l]
 
-But I would also like to support it out of the box somehow.
+I would also like to support it out of the box somehow, but I'm not sure about
+the best way to do it.

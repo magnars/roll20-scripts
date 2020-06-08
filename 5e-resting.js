@@ -1,4 +1,4 @@
-/* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj */
+/* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj, randomInteger */
 
 (function () {
   var getClassLevel = function (charId, className) {
@@ -131,18 +131,47 @@
     sendChat("Status", msg, null, {noarchive:true});
   }
 
+  function resolveDice(txt) {
+    const tokenize = /(\d+d\d+|\d+|\+|-)/ig;
+    const dieparts = /^(\d+)?d(\d+)$/i;
+    const ops = {
+      '+': (m, n) => m + n,
+      '-': (m, n) => m - n
+    };
+    let op = '+';
+
+    return (txt.replace(/\s+/g, '').match(tokenize) || []).reduce((m, t) => {
+      let matches = t.match(dieparts);
+      if (matches) {
+        return ops[op](m, [...Array(parseInt(matches[1]) || 1)].reduce(m => m + randomInteger(parseInt(matches[2])), 0));
+      } else if (/^\d+$/.test(t)) {
+        return ops[op](m, parseInt(t));
+      } else {
+        op = t;
+        return m;
+      }
+    }, 0);
+  }
+
   function checkResource(charId, attr, actions, suggestions, restType) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") { return; }
 
     var name = getAttrByName(charId, attr.get('name') + '_name');
     if (!name) { return; }
 
+    var verb = "regained";
     var result;
     if (resources[name] && resources[name][restType]) {
       result = resources[name][restType](charId);
     } else if (name.endsWith('[s]') || (restType == "longRest" && name.endsWith('[l]'))) {
       name = name.substring(0, name.length-3);
       result = "regained";
+    } else if (name.match(/(.+)\[([sl])([0-9+-d]+)\]/)) {
+      var ss = name.match(/(.+)\[([sl])([0-9+-d]+)\]/);
+      if (restType == "shortRest" && ss[2] == "l") { return; }
+      name = ss[1];
+      result = resolveDice(ss[3]);
+      verb = ss[3] + " rolled " + result + " ";
     }
     if (!result) { return; }
 
@@ -153,9 +182,9 @@
       if (value < max) {
         attr.set({ current: max });
         if (max == 1) {
-          actions.push(name + " regained.");
+          actions.push(`${name} ${verb}.`);
         } else {
-          actions.push(`${name} regained (${value}->${max}).`);
+          actions.push(`${name} ${verb} (${value}→${max}).`);
         }
       }
       return;
@@ -173,9 +202,9 @@
         var newVal = Math.min(max, value + result);
         attr.set({ current: newVal });
         if (max == 1) {
-          actions.push(name + " regained.");
+          actions.push(`${name} ${verb}.`);
         } else {
-          actions.push(`${name} regained (${value}->${newVal}).`);
+          actions.push(`${name} ${verb} (${value}→${newVal}).`);
         }
       }
       return;
@@ -225,7 +254,7 @@
     var new_slots = toRegain == "regained" ? max_slots : Math.min(max_slots, cur_slots + toRegain);
 
     if(cur_slots < new_slots) {
-      actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}->${new_slots}).`);
+      actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}→${new_slots}).`);
       charslot.set({current: new_slots});
     }
   }
