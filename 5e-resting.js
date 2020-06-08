@@ -372,6 +372,8 @@
         });
       }
     });
+
+    log("5E OGL Resting in Style is ready! Select chars, then: !short-rest and !long-rest");
   });
 
 }());
