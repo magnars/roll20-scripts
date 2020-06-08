@@ -10,8 +10,8 @@ Select your character, then run the `!short-rest` command. It will:
 
 - check your hit points and hit dice, and remind you to use them if needed.
 
-- replenish Warlock **Pact Magic** spell slots back. This works correctly even
-  if you are a multiclass spell caster.
+- replenish Warlock **Pact Magic** spell slots. This works correctly even if you
+  are a multiclass spell caster.
 
 - replenish class specific resources, like **Wild Shape**, **Second Wind** and **Channel Divinity**.
 

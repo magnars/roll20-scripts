@@ -125,11 +125,7 @@
   function checkResource(charId, attr, actions, suggestions, restType) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") { return; }
 
-    try {
-      var name = getAttrByName(charId, attr.get('name') + '_name');
-    } catch (e) {
-      return;
-    }
+    var name = getAttrByName(charId, attr.get('name') + '_name');
     if (!name) { return; }
 
     var result;
@@ -234,9 +230,9 @@
     if (!verifiedCurAndMax(token, hd, 'Hit dice')) { return; }
     if (!verifiedCurAndMax(token, hp, 'Hit points')) { return; }
 
-    var max_hp = parseInt(hp.get("max"));
-    var cur_hp = parseInt(hp.get("current"));
-    var cur_hd = parseInt(hd.get("current"));
+    var max_hp = Number(hp.get("max"));
+    var cur_hp = Number(hp.get("current"));
+    var cur_hd = Number(hd.get("current"));
 
     if (cur_hp == 0) {
       sendChat("Short rest for " + token.get("name"), "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
