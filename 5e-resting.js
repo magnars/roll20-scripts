@@ -1,7 +1,5 @@
 /* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj */
 
-// TODO: Mystic Arcanum (Warlock), Signature Spells (Wizard), Drow Magic and Infernal Legacy (Tiefling)
-
 (function () {
   var regained = function (_) { return "regained"; };
   var consider = function (_) { return "consider"; };

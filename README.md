@@ -65,3 +65,19 @@ with "[s]", then it is reset every short and long rest.
 Also: Please let me know if I have missed any skills in the official source
 books, I'll happily add the support.
 
+### Missing features
+
+There are some skills that give characters access to spells that can be used
+once a day without using spell slots:
+
+- Mystic Arcanum (Warlock)
+- Signature Spells (Wizard)
+- Drow Magic (Drow)
+- Infernal Legacy (Tiefling)
+
+I'm not sure how these should be handled. You can easily fix it yourself by
+adding the [l] postfix to a resource box, like this:
+
+    Mystic Arcanum: Eyebite [l]
+
+But I would also like to support it out of the box somehow.
