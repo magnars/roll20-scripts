@@ -1,6 +1,5 @@
 /* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj */
 
-// TODO: [l] and [s]
 // TODO: Mystic Arcanum (Warlock), Signature Spells (Wizard), Drow Magic and Infernal Legacy (Tiefling)
 // TODO: Reminders of rest-time abilities like Song of Rest (Bard) and Portent (Wizard)
 
@@ -134,9 +133,15 @@
     } catch (e) {
       return;
     }
-    if (!name || !resources[name] || !resources[name][restType]) { return; }
+    if (!name) { return; }
 
-    var result = resources[name][restType](charId);
+    var result;
+    if (resources[name] && resources[name][restType]) {
+      result = resources[name][restType](charId);
+    } else if (name.endsWith('[s]') || (restType == "longRest" && name.endsWith('[l]'))) {
+      name = name.substring(0, name.length-3);
+      result = "regained";
+    }
     if (!result) { return; }
 
     var value = Number(attr.get('current'));
