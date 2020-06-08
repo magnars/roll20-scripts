@@ -1,9 +1,6 @@
 /* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj */
 
 (function () {
-  var regained = function (_) { return "regained"; };
-  var consider = function (_) { return "consider"; };
-
   var getClassLevel = function (charId, className) {
     var s = getAttrByName(charId, 'class_display');
     if (s) {
@@ -23,75 +20,87 @@
     };
   };
 
+  var regained = function (_) { return "regained"; };
+  var consider = function (_) { return "consider"; };
+
+  var only_long_rest = {longRest: regained};
+  var long_and_short_rests = {longRest: regained, shortRest: regained};
+
   var resources = {
     // Barbarian
-    "Rage": {longRest: regained},
-    "Consult the Spirits": {longRest: regained},
+    "Rage": only_long_rest,
+    "Consult the Spirits": only_long_rest,
 
     // Bard
     "Bardic Inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
 
     // Cleric
-    "Channel Divinity": {longRest: regained, shortRest: regained},
-    "Divine Intervention": {longRest: regained},
-    "Warding Flare": {longRest: regained},
-    "Wrath of the Storm": {longRest: regained},
-    "War Priest": {longRest: regained},
+    "Channel Divinity": long_and_short_rests,
+    "Divine Intervention": only_long_rest,
+    "Warding Flare": only_long_rest,
+    "Wrath of the Storm": only_long_rest,
+    "War Priest": only_long_rest,
 
     // Druid
-    "Wild Shape": {longRest: regained, shortRest: regained},
-    "Natural Recovery": {longRest: regained},
+    "Wild Shape": long_and_short_rests,
+    "Natural Recovery": only_long_rest,
 
     // Fighter
-    "Second Wind": {longRest: regained, shortRest: regained},
-    "Action Surge": {longRest: regained, shortRest: regained},
-    "Superiority Dice": {longRest: regained, shortRest: regained},
-    "Indomitable": {longRest: regained},
+    "Second Wind": long_and_short_rests,
+    "Action Surge": long_and_short_rests,
+    "Superiority Dice": long_and_short_rests,
+    "Indomitable": only_long_rest,
 
     // Monk
-    "Ki": {longRest: regained, shortRest: regained},
-    "Wholeness of Body": {longRest: regained},
+    "Ki": long_and_short_rests,
+    "Wholeness of Body": only_long_rest,
 
     // Paladin
-    "Divine Sense": {longRest: regained},
-    "Lay on Hands": {longRest: regained},
-    "Cleansing Touch": {longRest: regained},
-    "Holy Nimbus": {longRest: regained},
-    "Undying Sentinel": {longRest: regained},
-    "Elder Champion": {longRest: regained},
-    "Avenging Angel": {longRest: regained},
+    "Divine Sense": only_long_rest,
+    "Lay on Hands": only_long_rest,
+    "Cleansing Touch": only_long_rest,
+    "Holy Nimbus": only_long_rest,
+    "Undying Sentinel": only_long_rest,
+    "Elder Champion": only_long_rest,
+    "Avenging Angel": only_long_rest,
 
     // Rogue
-    "Stroke of Luck": {longRest: regained, shortRest: regained},
-    "Spell Thief": {longRest: regained},
+    "Stroke of Luck": long_and_short_rests,
+    "Spell Thief": only_long_rest,
 
     // Sorcerer
     "Sorcery Points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
-    "Tides of Chaos": {longRest: regained},
+    "Tides of Chaos": only_long_rest,
 
     // Warlock
-    "Hexblade’s Curse": {longRest: regained, shortRest: regained},
-    "Accursed Specter": {longRest: regained},
-    "Eldritch Master": {longRest: regained},
-    "Fey Presence": {longRest: regained, shortRest: regained},
-    "Misty Escape": {longRest: regained, shortRest: regained},
-    "Dark Delirium": {longRest: regained, shortRest: regained},
-    "Dark One's Own Luck": {longRest: regained, shortRest: regained},
-    "Hurl Through Hell": {longRest: regained},
-    "Entropic Ward": {longRest: regained, shortRest: regained},
+    "Hexblade’s Curse": long_and_short_rests,
+    "Accursed Specter": only_long_rest,
+    "Eldritch Master": only_long_rest,
+    "Fey Presence": long_and_short_rests,
+    "Misty Escape": long_and_short_rests,
+    "Dark Delirium": long_and_short_rests,
+    "Dark One's Own Luck": long_and_short_rests,
+    "Hurl Through Hell": only_long_rest,
+    "Entropic Ward": long_and_short_rests,
 
     // Wizard
     "Arcane Recovery": {longRest: regained, shortRest: consider},
-    "Arcane Ward": {longRest: regained},
-    "Benign Transposition": {longRest: regained},
-    "The Third Eye": {longRest: regained, shortRest: regained},
-    "Illusory Self": {longRest: regained, shortRest: regained},
-    "Shapechanger": {longRest: regained, shortRest: regained},
+    "Arcane Ward": only_long_rest,
+    "Benign Transposition": only_long_rest,
+    "The Third Eye": long_and_short_rests,
+    "Illusory Self": long_and_short_rests,
+    "Shapechanger": long_and_short_rests,
 
     // Race abilities
-    "Breath Weapon": {longRest: regained}, // Dragonborn
-    "Relentless Endurance": {longRest: regained}, // Half-orc
-    "Githyanki Psionics": {longRest: regained}  // Githyaki
+    "Breath Weapon": only_long_rest, // Dragonborn
+    "Relentless Endurance": only_long_rest, // Half-orc
+    "Grovel, Cower, and Beg": long_and_short_rests, // Kobold
+    "Healing Hands": only_long_rest, // Aasimar
+    "Fury of the Small": long_and_short_rests, // Goblin
+    "Stone’s Endurance": long_and_short_rests, // Goliath
+    "Saving Face": long_and_short_rests, // Hobgoblin
+    "Hungry Jaws": long_and_short_rests, // Lizardfolk
+    "Hidden Step": long_and_short_rests // Firbolg
   };
 
   var warlockPactMagic = [

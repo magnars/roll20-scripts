@@ -70,10 +70,14 @@ books, I'll happily add the support.
 There are some skills that give characters access to spells that can be used
 once a day without using spell slots:
 
+- Drow Magic
+- Firbolg Magic
 - Mystic Arcanum (Warlock)
 - Signature Spells (Wizard)
-- Drow Magic (Drow)
 - Infernal Legacy (Tiefling)
+- Githyanki Psionics (Gith)
+- Control Air and Water (Triton)
+- Innate Spellcasting (Yuan-ti Pureblood)
 
 I'm not sure how these should be handled. You can easily fix it yourself by
 adding the [l] postfix to a resource box, like this:
