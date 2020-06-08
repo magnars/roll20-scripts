@@ -1,7 +1,6 @@
 /* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj */
 
 // TODO: Mystic Arcanum (Warlock), Signature Spells (Wizard), Drow Magic and Infernal Legacy (Tiefling)
-// TODO: Reminders of rest-time abilities like Song of Rest (Bard) and Portent (Wizard)
 
 (function () {
   var regained = function (_) { return "regained"; };
@@ -264,6 +263,12 @@
     if (warlockLevel > 0) {
       var magic = warlockPactMagic[warlockLevel];
       regainSpellSlots(charId, magic.level, magic.slots, actions);
+    }
+
+    // Bard Song of Rest
+    var bardLevel = getClassLevel(charId, "Bard");
+    if (bardLevel > 1) {
+      suggestions.push("Consider using Song of Rest.");
     }
 
     // Regain resources
