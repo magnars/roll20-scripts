@@ -226,7 +226,7 @@
     }, 0);
   }
 
-  function checkModifier(charId, attr, actions, suggestions, restType) {
+  function checkModifier(charId, attr, faded, restType) {
     if (!attr || attr.get("current") === "") { return; }
     var name = getAttrByName(charId, attr.get('name').replace("_active_flag", "_name"));
     if (!name) { return; }
@@ -235,7 +235,7 @@
     var result = modifiers[lcname] && modifiers[lcname][restType] && modifiers[lcname][restType](charId);
 
     if (result === 'fades' && attr.get("current") == "1") {
-      actions.push(name + " fades.");
+      faded.push(name);
       attr.setWithWorker({ current: "0" });
     }
   }
@@ -324,6 +324,16 @@
     });
   }
 
+  function fadeBuffs(charId, actions, restType) {
+    var faded = [];
+    findModifierAttrs(charId).forEach(function (attr) {
+      checkModifier(charId, attr, faded, restType);
+    });
+    [...new Set(faded)].forEach(function (name) {
+      actions.push(name + " fades.");
+    });
+  }
+
   function getAttr(charId, name) {
     return findObjs({
       type: 'attribute',
@@ -409,10 +419,8 @@
       checkResource(charId, attr, actions, suggestions, 'shortRest');
     });
 
-    // Fade blessings
-    findModifierAttrs(charId).forEach(function (attr) {
-      checkModifier(charId, attr, actions, suggestions, 'shortRest');
-    });
+    // Fade buffs
+    fadeBuffs(charId, actions, 'shortRest');
 
     // Notify player
     var points = actions.concat(suggestions);
@@ -477,10 +485,8 @@
       checkResource(charId, attr, actions, suggestions, 'longRest');
     });
 
-    // Fade blessings
-    findModifierAttrs(charId).forEach(function (attr) {
-      checkModifier(charId, attr, actions, suggestions, 'longRest');
-    });
+    // Fade buffs
+    fadeBuffs(charId, actions, 'longRest');
 
     // Notify player
     var points = actions.concat(suggestions);
