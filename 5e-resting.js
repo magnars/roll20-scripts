@@ -28,82 +28,82 @@
 
   var resources = {
     // Barbarian
-    "Rage": only_long_rest,
-    "Consult the Spirits": only_long_rest,
+    "rage": only_long_rest,
+    "consult the spirits": only_long_rest,
 
     // Bard
-    "Bardic Inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
+    "bardic inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
 
     // Cleric
-    "Channel Divinity": long_and_short_rests,
-    "Divine Intervention": only_long_rest,
-    "Warding Flare": only_long_rest,
-    "Wrath of the Storm": only_long_rest,
-    "War Priest": only_long_rest,
+    "channel divinity": long_and_short_rests,
+    "divine intervention": only_long_rest,
+    "warding flare": only_long_rest,
+    "wrath of the storm": only_long_rest,
+    "war priest": only_long_rest,
 
     // Druid
-    "Wild Shape": long_and_short_rests,
-    "Natural Recovery": only_long_rest,
+    "wild shape": long_and_short_rests,
+    "natural recovery": only_long_rest,
 
     // Fighter
-    "Second Wind": long_and_short_rests,
-    "Action Surge": long_and_short_rests,
-    "Superiority Dice": long_and_short_rests,
-    "Indomitable": only_long_rest,
+    "second wind": long_and_short_rests,
+    "action surge": long_and_short_rests,
+    "superiority dice": long_and_short_rests,
+    "indomitable": only_long_rest,
 
     // Monk
-    "Ki": long_and_short_rests,
-    "Wholeness of Body": only_long_rest,
+    "ki": long_and_short_rests,
+    "wholeness of body": only_long_rest,
 
     // Paladin
-    "Divine Sense": only_long_rest,
-    "Lay on Hands": only_long_rest,
-    "Cleansing Touch": only_long_rest,
-    "Holy Nimbus": only_long_rest,
-    "Undying Sentinel": only_long_rest,
-    "Elder Champion": only_long_rest,
-    "Avenging Angel": only_long_rest,
+    "divine sense": only_long_rest,
+    "lay on hands": only_long_rest,
+    "cleansing touch": only_long_rest,
+    "holy nimbus": only_long_rest,
+    "undying sentinel": only_long_rest,
+    "elder champion": only_long_rest,
+    "avenging angel": only_long_rest,
 
     // Rogue
-    "Stroke of Luck": long_and_short_rests,
-    "Spell Thief": only_long_rest,
+    "stroke of luck": long_and_short_rests,
+    "spell thief": only_long_rest,
 
     // Sorcerer
-    "Sorcery Points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
-    "Tides of Chaos": only_long_rest,
+    "sorcery points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
+    "tides of chaos": only_long_rest,
 
     // Warlock
-    "Hexblade’s Curse": long_and_short_rests,
-    "Accursed Specter": only_long_rest,
-    "Eldritch Master": only_long_rest,
-    "Fey Presence": long_and_short_rests,
-    "Misty Escape": long_and_short_rests,
-    "Dark Delirium": long_and_short_rests,
-    "Dark One's Own Luck": long_and_short_rests,
-    "Hurl Through Hell": only_long_rest,
-    "Entropic Ward": long_and_short_rests,
+    "hexblade’s curse": long_and_short_rests,
+    "accursed specter": only_long_rest,
+    "eldritch master": only_long_rest,
+    "fey presence": long_and_short_rests,
+    "misty escape": long_and_short_rests,
+    "dark delirium": long_and_short_rests,
+    "dark one's own luck": long_and_short_rests,
+    "hurl through hell": only_long_rest,
+    "entropic ward": long_and_short_rests,
 
     // Wizard
-    "Arcane Recovery": {longRest: regained, shortRest: consider},
-    "Arcane Ward": only_long_rest,
-    "Benign Transposition": only_long_rest,
-    "The Third Eye": long_and_short_rests,
-    "Illusory Self": long_and_short_rests,
-    "Shapechanger": long_and_short_rests,
+    "arcane recovery": {longRest: regained, shortRest: consider},
+    "arcane ward": only_long_rest,
+    "benign transposition": only_long_rest,
+    "the third eye": long_and_short_rests,
+    "illusory self": long_and_short_rests,
+    "shapechanger": long_and_short_rests,
 
     // Race abilities
-    "Breath Weapon": only_long_rest, // Dragonborn
-    "Relentless Endurance": only_long_rest, // Half-orc
-    "Grovel, Cower, and Beg": long_and_short_rests, // Kobold
-    "Healing Hands": only_long_rest, // Aasimar
-    "Fury of the Small": long_and_short_rests, // Goblin
-    "Stone’s Endurance": long_and_short_rests, // Goliath
-    "Saving Face": long_and_short_rests, // Hobgoblin
-    "Hungry Jaws": long_and_short_rests, // Lizardfolk
-    "Hidden Step": long_and_short_rests, // Firbolg
+    "breath weapon": only_long_rest, // Dragonborn
+    "relentless endurance": only_long_rest, // Half-orc
+    "grovel, cower, and beg": long_and_short_rests, // Kobold
+    "healing hands": only_long_rest, // Aasimar
+    "fury of the small": long_and_short_rests, // Goblin
+    "stone’s endurance": long_and_short_rests, // Goliath
+    "saving face": long_and_short_rests, // Hobgoblin
+    "hungry jaws": long_and_short_rests, // Lizardfolk
+    "hidden step": long_and_short_rests, // Firbolg
 
     // Feats
-    "Lucky": only_long_rest
+    "lucky": only_long_rest
   };
 
   var fades = function (_) { return "fades"; };
@@ -230,8 +230,8 @@
     if (!attr || attr.get("current") === "") { return; }
     var name = getAttrByName(charId, attr.get('name').replace("_active_flag", "_name"));
     if (!name) { return; }
-
     var lcname = name.toLowerCase();
+
     var result = modifiers[lcname] && modifiers[lcname][restType] && modifiers[lcname][restType](charId);
 
     if (result === 'fades' && attr.get("current") == "1") {
@@ -245,11 +245,12 @@
 
     var name = getAttrByName(charId, attr.get('name') + '_name');
     if (!name) { return; }
+    var lcname = name.toLowerCase();
 
     var verb = "regained";
     var result;
-    if (resources[name] && resources[name][restType]) {
-      result = resources[name][restType](charId);
+    if (resources[lcname] && resources[lcname][restType]) {
+      result = resources[lcname][restType](charId);
     } else if (name.endsWith('[s]') || (restType == "longRest" && name.endsWith('[l]'))) {
       name = name.substring(0, name.length-3);
       result = "regained";
