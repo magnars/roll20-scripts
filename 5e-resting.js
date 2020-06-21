@@ -106,6 +106,19 @@
     "Lucky": only_long_rest
   };
 
+  var fades = function (_) { return "fades"; };
+  var fades_after_long_rest = {longRest: fades};
+  var fades_after_short_rest = {longRest: fades, shortRest: fades};
+
+  var modifiers = {
+    "bless": fades_after_short_rest,
+    "mage armor": fades_after_long_rest,
+    "sacred weapon": fades_after_short_rest,
+    "shield of faith": fades_after_short_rest,
+    "guidance": fades_after_short_rest,
+    "divine favor": fades_after_short_rest
+  };
+
   var warlockPactMagic = [
     null,                   // Warlock 0
     {slots: 1, level: 1},   // Warlock 1
@@ -154,6 +167,20 @@
         return m;
       }
     }, 0);
+  }
+
+  function checkModifier(charId, attr, actions, suggestions, restType) {
+    if (!attr || attr.get("current") === "") { return; }
+    var name = getAttrByName(charId, attr.get('name').replace("_active_flag", "_name"));
+    if (!name) { return; }
+
+    var lcname = name.toLowerCase();
+    var result = modifiers[lcname] && modifiers[lcname][restType] && modifiers[lcname][restType](charId);
+
+    if (result === 'fades' && attr.get("current") == "1") {
+      actions.push(name + " fades.");
+      attr.setWithWorker({ current: "0" });
+    }
   }
 
   function checkResource(charId, attr, actions, suggestions, restType) {
@@ -223,6 +250,20 @@
       return name === 'class_resource' ||
         name === 'other_resource' ||
         name.startsWith('repeating_resource_') && !name.endsWith('_name');
+    });
+  }
+
+  function findModifierAttrs(charId) {
+    return findObjs({
+      type: 'attribute',
+      characterid: charId
+    }).filter(function (o) {
+      var name = o.get('name') || '';
+      return (name.startsWith('repeating_acmod_') && name.endsWith('_global_ac_active_flag')) ||
+        (name.startsWith('repeating_savemod_') && name.endsWith('_global_save_active_flag')) ||
+        (name.startsWith('repeating_tohitmod_') && name.endsWith('_global_attack_active_flag')) ||
+        (name.startsWith('repeating_skillmod_') && name.endsWith('_global_skill_active_flag')) ||
+        (name.startsWith('repeating_damagemod_') && name.endsWith('_global_damage_active_flag'));
     });
   }
 
@@ -311,6 +352,11 @@
       checkResource(charId, attr, actions, suggestions, 'shortRest');
     });
 
+    // Fade blessings
+    findModifierAttrs(charId).forEach(function (attr) {
+      checkModifier(charId, attr, actions, suggestions, 'shortRest');
+    });
+
     // Notify player
     var points = actions.concat(suggestions);
     if (points.length) {
@@ -372,6 +418,11 @@
     // Regain resources
     findResourceAttrs(charId).forEach(function (attr) {
       checkResource(charId, attr, actions, suggestions, 'longRest');
+    });
+
+    // Fade blessings
+    findModifierAttrs(charId).forEach(function (attr) {
+      checkModifier(charId, attr, actions, suggestions, 'longRest');
     });
 
     // Notify player

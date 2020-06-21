@@ -23,6 +23,8 @@ Select your character, then run the `!short-rest` command. It will:
 
 - remind Wizards to use **Arcane Recovery**, and Bards to use **Song of Rest**.
 
+- turn off global modifiers with a short duration, like **Bless**, **Sacred Weapon** and **Shield of Faith**.
+
 ## Long rest
 
 Select your character, then run the `!long-rest` command. It will:
@@ -40,6 +42,8 @@ Select your character, then run the `!long-rest` command. It will:
 - replenish subclass specific resources, like **Consult the Spirits** and **Avenging Angel**.
 
 - replenish race specific resources, like **Breath Weapon** and **Relentless Endurance**.
+
+- turn off global modifiers with long durations, like **Mage Armor**.
 
 ## Usage
 
