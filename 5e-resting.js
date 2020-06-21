@@ -100,7 +100,10 @@
     "Stone’s Endurance": long_and_short_rests, // Goliath
     "Saving Face": long_and_short_rests, // Hobgoblin
     "Hungry Jaws": long_and_short_rests, // Lizardfolk
-    "Hidden Step": long_and_short_rests // Firbolg
+    "Hidden Step": long_and_short_rests, // Firbolg
+
+    // Feats
+    "Lucky": only_long_rest
   };
 
   var warlockPactMagic = [

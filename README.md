@@ -95,6 +95,7 @@ once a day without using spell slots:
 - Githyanki Psionics (Gith)
 - Control Air and Water (Triton)
 - Innate Spellcasting (Yuan-ti Pureblood)
+- Magic Initiate (Feat)
 
 I'm not sure how these should be handled. You can easily fix it yourself by
 adding the [l] postfix to a resource box, like this:
