@@ -63,7 +63,7 @@
     "visions of the past": long_and_short_rests,
     "embodiment of the law": only_long_rest,
     "eyes of the grave": only_long_rest,
-    "sentinel at death's door": only_long_rest,
+    "sentinel at deaths door": only_long_rest,
 
     // Druid
     "wild shape": long_and_short_rests,
@@ -108,7 +108,7 @@
     // Ranger
     "detect portal": long_and_short_rests,
     "ethereal step": long_and_short_rests,
-    "magic-user's nemesis": long_and_short_rests,
+    "magicusers nemesis": long_and_short_rests,
     "hunters sense": only_long_rest,
 
     // Rogue
@@ -125,13 +125,13 @@
     "unearthly recovery": only_long_rest,
 
     // Warlock
-    "hexblade’s curse": long_and_short_rests,
+    "hexblades curse": long_and_short_rests,
     "accursed specter": only_long_rest,
     "eldritch master": only_long_rest,
     "fey presence": long_and_short_rests,
     "misty escape": long_and_short_rests,
     "dark delirium": long_and_short_rests,
-    "dark one's own luck": long_and_short_rests,
+    "dark ones own luck": long_and_short_rests,
     "hurl through hell": only_long_rest,
     "entropic ward": long_and_short_rests,
 
@@ -156,7 +156,7 @@
     "grovel, cower, and beg": long_and_short_rests, // Kobold
     "healing hands": only_long_rest, // Aasimar
     "fury of the small": long_and_short_rests, // Goblin
-    "stone’s endurance": long_and_short_rests, // Goliath
+    "stones endurance": long_and_short_rests, // Goliath
     "saving face": long_and_short_rests, // Hobgoblin
     "hungry jaws": long_and_short_rests, // Lizardfolk
     "hidden step": long_and_short_rests, // Firbolg
@@ -182,20 +182,21 @@
     "catnap": fades_after_short_rest,
     "ceremony": fades_after_short_rest,
     "circle of power": fades_after_short_rest,
-    "crusader’s mantle": fades_after_short_rest,
+    "crusaders mantle": fades_after_short_rest,
     "darkvision": fades_after_long_rest,
     "death ward": fades_after_long_rest,
     "divine favor": fades_after_short_rest,
-    "dragon's breath": fades_after_short_rest,
+    "dragons breath": fades_after_short_rest,
     "elemental weapon": fades_after_short_rest,
     "enhance ability": fades_after_short_rest,
-    "enlarge/reduce": fades_after_short_rest,
+    "enlargereduce": fades_after_short_rest,
+    "enlarge reduce": fades_after_short_rest,
     "etherealness": fades_after_long_rest,
     "feign death": fades_after_short_rest,
     "fire shield": fades_after_short_rest,
     "flame arrows": fades_after_short_rest,
     "foresight": fades_after_long_rest,
-    "fortune's favor": fades_after_short_rest,
+    "fortunes favor": fades_after_short_rest,
     "freedom of movement": fades_after_short_rest,
     "friends": fades_after_short_rest,
     "gaseous form": fades_after_short_rest,
@@ -204,7 +205,7 @@
     "guardian of nature": fades_after_short_rest,
     "guidance": fades_after_short_rest,
     "haste": fades_after_short_rest,
-    "heroes' feast": fades_after_short_rest,
+    "heroes feast": fades_after_short_rest,
     "heroism": fades_after_short_rest,
     "holy aura": fades_after_short_rest,
     "invisibility": fades_after_short_rest,
@@ -226,7 +227,7 @@
     "spider climb": fades_after_short_rest,
     "stoneskin": fades_after_short_rest,
     "swift quiver": fades_after_short_rest,
-    "tenser’s transformation": fades_after_short_rest,
+    "tensers transformation": fades_after_short_rest,
     "true polymorph": fades_after_short_rest,
     "warding bond": fades_after_short_rest,
     "wind walk": fades_after_long_rest,
@@ -286,11 +287,15 @@
     }, 0);
   }
 
+  var normalize = function (s) {
+    return s.toLowerCase().replace(/[^a-z ]+/g, "");
+  };
+
   function checkModifier(charId, attr, faded, restType) {
     if (!attr || attr.get("current") === "") { return; }
     var name = getAttrByName(charId, attr.get('name').replace("_active_flag", "_name"));
     if (!name) { return; }
-    var lcname = name.toLowerCase();
+    var lcname = normalize(name);
 
     var result = modifiers[lcname] && modifiers[lcname][restType] && modifiers[lcname][restType](charId);
 
@@ -305,7 +310,7 @@
 
     var name = getAttrByName(charId, attr.get('name') + '_name');
     if (!name) { return; }
-    var lcname = name.toLowerCase();
+    var lcname = normalize(name);
 
     var verb = "regained";
     var result;
