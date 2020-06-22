@@ -35,135 +35,149 @@
   var only_long_rest = {longRest: regained};
   var long_and_short_rests = {longRest: regained, shortRest: regained};
 
+  var normalize = function (s) {
+    return s.toLowerCase().replace(/[^a-z ]+/g, "");
+  };
+
+  var normalizeMapKeys = function (m) {
+    Object.keys(m).forEach(function(k) {
+      var v = m[k];
+      delete m[k];
+      m[normalize(k)] = v;
+    });
+  };
+
   var resources = {
     // Artificer
-    "flash of genius": only_long_rest,
+    "Flash of Genius": only_long_rest,
 
     // Barbarian
-    "rage": only_long_rest,
-    "consult the spirits": only_long_rest,
+    "Rage": only_long_rest,
+    "Consult the Spirits": only_long_rest,
 
     // Bard
-    "bardic inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
-    "enthralling performance": long_and_short_rests,
-    "words of terror": long_and_short_rests,
-    "unbreakable majesty": long_and_short_rests,
-    "infectious inspiration": only_long_rest,
-    "mantle of majesty": only_long_rest,
-    "shadow lore": only_long_rest,
-    "universal speech": only_long_rest,
+    "Bardic Inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
+    "Enthralling Performance": long_and_short_rests,
+    "Words of Terror": long_and_short_rests,
+    "Unbreakable Majesty": long_and_short_rests,
+    "Infectious Inspiration": only_long_rest,
+    "Mantle of Majesty": only_long_rest,
+    "Shadow Lore": only_long_rest,
+    "Universal Speech": only_long_rest,
 
     // Cleric
-    "channel divinity": long_and_short_rests,
-    "divine intervention": only_long_rest,
-    "warding flare": only_long_rest,
-    "wrath of the storm": only_long_rest,
-    "war priest": only_long_rest,
-    "war priest attack": only_long_rest,
-    "visions of the past": long_and_short_rests,
-    "embodiment of the law": only_long_rest,
-    "eyes of the grave": only_long_rest,
-    "sentinel at deaths door": only_long_rest,
+    "Channel Divinity": long_and_short_rests,
+    "Divine Intervention": only_long_rest,
+    "Warding Flare": only_long_rest,
+    "Wrath of the Storm": only_long_rest,
+    "War Priest": only_long_rest,
+    "War Priest Attack": only_long_rest,
+    "Visions of the Past": long_and_short_rests,
+    "Embodiment of the Law": only_long_rest,
+    "Eyes of the Grave": only_long_rest,
+    "Sentinel at Death's Door": only_long_rest,
 
     // Druid
-    "wild shape": long_and_short_rests,
-    "natural recovery": only_long_rest,
-    "spirit totem": long_and_short_rests,
-    "balm of the summer court": only_long_rest,
-    "faithful summons": only_long_rest,
-    "fungal infestation": only_long_rest,
-    "hidden paths": only_long_rest,
-    "walker in dreams": only_long_rest,
+    "Wild Shape": long_and_short_rests,
+    "Natural Recovery": only_long_rest,
+    "Spirit Totem": long_and_short_rests,
+    "Balm of the Summer Court": only_long_rest,
+    "Faithful Summons": only_long_rest,
+    "Fungal Infestation": only_long_rest,
+    "Hidden Paths": only_long_rest,
+    "Walker in Dreams": only_long_rest,
 
     // Fighter
-    "second wind": long_and_short_rests,
-    "action surge": long_and_short_rests,
-    "superiority dice": long_and_short_rests,
-    "indomitable": only_long_rest,
-    "arcane shot": long_and_short_rests,
-    "fighting spirit": only_long_rest,
-    "strength before death": only_long_rest,
-    "unwavering mark": only_long_rest,
-    "warding maneuver": only_long_rest,
+    "Second Wind": long_and_short_rests,
+    "Action Surge": long_and_short_rests,
+    "Superiority Dice": long_and_short_rests,
+    "Indomitable": only_long_rest,
+    "Arcane Shot": long_and_short_rests,
+    "Fighting Spirit": only_long_rest,
+    "Strength Before Death": only_long_rest,
+    "Unwavering Mark": only_long_rest,
+    "Warding Maneuver": only_long_rest,
 
     // Monk
-    "ki": long_and_short_rests,
-    "ki points": long_and_short_rests,
-    "wholeness of body": only_long_rest,
+    "Ki": long_and_short_rests,
+    "Ki Points": long_and_short_rests,
+    "Wholeness of Body": only_long_rest,
 
     // Paladin
-    "divine sense": only_long_rest,
-    "lay on hands": only_long_rest,
-    "cleansing touch": only_long_rest,
-    "holy nimbus": only_long_rest,
-    "undying sentinel": only_long_rest,
-    "elder champion": only_long_rest,
-    "avenging angel": only_long_rest,
-    "dread lord": only_long_rest,
-    "emissary of redemption": only_long_rest,
-    "glorious defense": only_long_rest,
-    "invincible conqueror": only_long_rest,
-    "living legend": only_long_rest,
+    "Divine Sense": only_long_rest,
+    "Lay on Hands": only_long_rest,
+    "Cleansing Touch": only_long_rest,
+    "Holy Nimbus": only_long_rest,
+    "Undying Sentinel": only_long_rest,
+    "Elder Champion": only_long_rest,
+    "Avenging Angel": only_long_rest,
+    "Dread Lord": only_long_rest,
+    "Emissary of Redemption": only_long_rest,
+    "Glorious Defense": only_long_rest,
+    "Invincible Conqueror": only_long_rest,
+    "Living Legend": only_long_rest,
 
     // Ranger
-    "detect portal": long_and_short_rests,
-    "ethereal step": long_and_short_rests,
-    "magicusers nemesis": long_and_short_rests,
-    "hunters sense": only_long_rest,
+    "Detect Portal": long_and_short_rests,
+    "Ethereal Step": long_and_short_rests,
+    "Magic-User's Nemesis": long_and_short_rests,
+    "Hunter's Sense": only_long_rest,
 
     // Rogue
-    "stroke of luck": long_and_short_rests,
-    "spell thief": only_long_rest,
-    "unerring eye": only_long_rest,
+    "Stroke of Luck": long_and_short_rests,
+    "Spell Thief": only_long_rest,
+    "Unerring Eye": only_long_rest,
 
     // Sorcerer
-    "sorcery points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
-    "tides of chaos": only_long_rest,
-    "favored by the gods": long_and_short_rests,
-    "wind soul": long_and_short_rests,
-    "strength of the grave": only_long_rest,
-    "unearthly recovery": only_long_rest,
+    "Sorcery Points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
+    "Tides of Chaos": only_long_rest,
+    "Favored by the Gods": long_and_short_rests,
+    "Wind Soul": long_and_short_rests,
+    "Strength of the Grave": only_long_rest,
+    "Unearthly Recovery": only_long_rest,
 
     // Warlock
-    "hexblades curse": long_and_short_rests,
-    "accursed specter": only_long_rest,
-    "eldritch master": only_long_rest,
-    "fey presence": long_and_short_rests,
-    "misty escape": long_and_short_rests,
-    "dark delirium": long_and_short_rests,
-    "dark ones own luck": long_and_short_rests,
-    "hurl through hell": only_long_rest,
-    "entropic ward": long_and_short_rests,
+    "Hexblade’s Curse": long_and_short_rests,
+    "Accursed Specter": only_long_rest,
+    "Eldritch Master": only_long_rest,
+    "Fey Presence": long_and_short_rests,
+    "Misty Escape": long_and_short_rests,
+    "Dark Delirium": long_and_short_rests,
+    "Dark One's Own Luck": long_and_short_rests,
+    "Hurl Through Hell": only_long_rest,
+    "Entropic Ward": long_and_short_rests,
 
     // Wizard
-    "arcane recovery": {longRest: regained, shortRest: consider},
-    "arcane ward": only_long_rest,
-    "benign transposition": only_long_rest,
-    "the third eye": long_and_short_rests,
-    "illusory self": long_and_short_rests,
-    "shapechanger": long_and_short_rests,
-    "bladesong": long_and_short_rests,
-    "arcane abeyance": long_and_short_rests,
-    "chronal shift": only_long_rest,
-    "event horizon": only_long_rest,
-    "momentary stasis": only_long_rest,
-    "power surge": {longRest: reset_to_1, shortRest: if_zero_then_1},
-    "violent attraction": only_long_rest,
+    "Arcane Recovery": {longRest: regained, shortRest: consider},
+    "Arcane Ward": only_long_rest,
+    "Benign Transposition": only_long_rest,
+    "The Third Eye": long_and_short_rests,
+    "Illusory Self": long_and_short_rests,
+    "Shapechanger": long_and_short_rests,
+    "Bladesong": long_and_short_rests,
+    "Arcane Abeyance": long_and_short_rests,
+    "Chronal Shift": only_long_rest,
+    "Event Horizon": only_long_rest,
+    "Momentary Stasis": only_long_rest,
+    "Power Surge": {longRest: reset_to_1, shortRest: if_zero_then_1},
+    "Violent Attraction": only_long_rest,
 
     // Race abilities
-    "breath weapon": only_long_rest, // Dragonborn
-    "relentless endurance": only_long_rest, // Half-orc
-    "grovel, cower, and beg": long_and_short_rests, // Kobold
-    "healing hands": only_long_rest, // Aasimar
-    "fury of the small": long_and_short_rests, // Goblin
-    "stones endurance": long_and_short_rests, // Goliath
-    "saving face": long_and_short_rests, // Hobgoblin
-    "hungry jaws": long_and_short_rests, // Lizardfolk
-    "hidden step": long_and_short_rests, // Firbolg
+    "Breath Weapon": only_long_rest, // Dragonborn
+    "Relentless Endurance": only_long_rest, // Half-orc
+    "Grovel, Cower, and Beg": long_and_short_rests, // Kobold
+    "Healing Hands": only_long_rest, // Aasimar
+    "Fury Of The Small": long_and_short_rests, // Goblin
+    "Stone’s Endurance": long_and_short_rests, // Goliath
+    "Saving Face": long_and_short_rests, // Hobgoblin
+    "Hungry Jaws": long_and_short_rests, // Lizardfolk
+    "Hidden Step": long_and_short_rests, // Firbolg
 
     // Feats
-    "lucky": only_long_rest
+    "Lucky": only_long_rest
   };
+
+  normalizeMapKeys(resources);
 
   var fades = function (_) { return "fades"; };
   var fades_after_long_rest = {longRest: fades};
@@ -171,71 +185,73 @@
 
   var modifiers = {
     // spells
-    "aid": fades_after_long_rest,
-    "armor of agathys": fades_after_short_rest,
-    "aura of purity": fades_after_short_rest,
-    "barkskin": fades_after_short_rest,
-    "beacon of hope": fades_after_short_rest,
-    "beast bond": fades_after_short_rest,
-    "bladesong": fades_after_short_rest,
-    "bless": fades_after_short_rest,
-    "catnap": fades_after_short_rest,
-    "ceremony": fades_after_short_rest,
-    "circle of power": fades_after_short_rest,
-    "crusaders mantle": fades_after_short_rest,
-    "darkvision": fades_after_long_rest,
-    "death ward": fades_after_long_rest,
-    "divine favor": fades_after_short_rest,
-    "dragons breath": fades_after_short_rest,
-    "elemental weapon": fades_after_short_rest,
-    "enhance ability": fades_after_short_rest,
-    "enlargereduce": fades_after_short_rest,
-    "enlarge reduce": fades_after_short_rest,
-    "etherealness": fades_after_long_rest,
-    "feign death": fades_after_short_rest,
-    "fire shield": fades_after_short_rest,
-    "flame arrows": fades_after_short_rest,
-    "foresight": fades_after_long_rest,
-    "fortunes favor": fades_after_short_rest,
-    "freedom of movement": fades_after_short_rest,
-    "friends": fades_after_short_rest,
-    "gaseous form": fades_after_short_rest,
-    "gift of alacrity": fades_after_long_rest,
-    "greater invisibility": fades_after_short_rest,
-    "guardian of nature": fades_after_short_rest,
-    "guidance": fades_after_short_rest,
-    "haste": fades_after_short_rest,
-    "heroes feast": fades_after_short_rest,
-    "heroism": fades_after_short_rest,
-    "holy aura": fades_after_short_rest,
-    "invisibility": fades_after_short_rest,
-    "longstrider": fades_after_short_rest,
-    "mage armor": fades_after_long_rest,
-    "magic weapon": fades_after_short_rest,
-    "motivational speech": fades_after_short_rest,
-    "pass without trace": fades_after_short_rest,
-    "protection from energy": fades_after_short_rest,
-    "protection from evil and good": fades_after_short_rest,
-    "protection from poison": fades_after_short_rest,
-    "resistance": fades_after_short_rest,
-    "sanctuary": fades_after_short_rest,
-    "shadow of moil": fades_after_short_rest,
-    "shield of faith": fades_after_short_rest,
-    "shillelagh": fades_after_short_rest,
-    "skill empowerment": fades_after_short_rest,
-    "soul cage": fades_after_long_rest,
-    "spider climb": fades_after_short_rest,
-    "stoneskin": fades_after_short_rest,
-    "swift quiver": fades_after_short_rest,
-    "tensers transformation": fades_after_short_rest,
-    "true polymorph": fades_after_short_rest,
-    "warding bond": fades_after_short_rest,
-    "wind walk": fades_after_long_rest,
+    "Aid": fades_after_long_rest,
+    "Armor of Agathys": fades_after_short_rest,
+    "Aura of Purity": fades_after_short_rest,
+    "Barkskin": fades_after_short_rest,
+    "Beacon of Hope": fades_after_short_rest,
+    "Beast Bond": fades_after_short_rest,
+    "Bladesong": fades_after_short_rest,
+    "Bless": fades_after_short_rest,
+    "Catnap": fades_after_short_rest,
+    "Ceremony": fades_after_short_rest,
+    "Circle of Power": fades_after_short_rest,
+    "Crusader’s Mantle": fades_after_short_rest,
+    "Darkvision": fades_after_long_rest,
+    "Death Ward": fades_after_long_rest,
+    "Divine Favor": fades_after_short_rest,
+    "Dragon's Breath": fades_after_short_rest,
+    "Elemental Weapon": fades_after_short_rest,
+    "Enhance Ability": fades_after_short_rest,
+    "Enlarge/Reduce": fades_after_short_rest,
+    "Enlarge Reduce": fades_after_short_rest,
+    "Etherealness": fades_after_long_rest,
+    "Feign Death": fades_after_short_rest,
+    "Fire Shield": fades_after_short_rest,
+    "Flame Arrows": fades_after_short_rest,
+    "Foresight": fades_after_long_rest,
+    "Fortune's Favor": fades_after_short_rest,
+    "Freedom of Movement": fades_after_short_rest,
+    "Friends": fades_after_short_rest,
+    "Gaseous Form": fades_after_short_rest,
+    "Gift of Alacrity": fades_after_long_rest,
+    "Greater Invisibility": fades_after_short_rest,
+    "Guardian of Nature": fades_after_short_rest,
+    "Guidance": fades_after_short_rest,
+    "Haste": fades_after_short_rest,
+    "Heroes' Feast": fades_after_short_rest,
+    "Heroism": fades_after_short_rest,
+    "Holy Aura": fades_after_short_rest,
+    "Invisibility": fades_after_short_rest,
+    "Longstrider": fades_after_short_rest,
+    "Mage Armor": fades_after_long_rest,
+    "Magic Weapon": fades_after_short_rest,
+    "Motivational Speech": fades_after_short_rest,
+    "Pass Without Trace": fades_after_short_rest,
+    "Protection from Energy": fades_after_short_rest,
+    "Protection from Evil and Good": fades_after_short_rest,
+    "Protection from Poison": fades_after_short_rest,
+    "Resistance": fades_after_short_rest,
+    "Sanctuary": fades_after_short_rest,
+    "Shadow of Moil": fades_after_short_rest,
+    "Shield of Faith": fades_after_short_rest,
+    "Shillelagh": fades_after_short_rest,
+    "Skill Empowerment": fades_after_short_rest,
+    "Soul Cage": fades_after_long_rest,
+    "Spider Climb": fades_after_short_rest,
+    "Stoneskin": fades_after_short_rest,
+    "Swift Quiver": fades_after_short_rest,
+    "Tenser’s Transformation": fades_after_short_rest,
+    "True Polymorph": fades_after_short_rest,
+    "Warding Bond": fades_after_short_rest,
+    "Wind Walk": fades_after_long_rest,
 
     // class abilities
-    "sacred weapon": fades_after_short_rest,
-    "rage": fades_after_short_rest
+    "Sacred Weapon": fades_after_short_rest,
+    "Rage": fades_after_short_rest
   };
+
+  normalizeMapKeys(modifiers);
 
   var warlockPactMagic = [
     null,                   // Warlock 0
@@ -286,10 +302,6 @@
       }
     }, 0);
   }
-
-  var normalize = function (s) {
-    return s.toLowerCase().replace(/[^a-z ]+/g, "");
-  };
 
   function checkModifier(charId, attr, faded, restType) {
     if (!attr || attr.get("current") === "") { return; }
