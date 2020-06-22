@@ -20,6 +20,15 @@
     };
   };
 
+  var if_zero_then_1 = function (charId, attr) {
+    var current = attr.get("current");
+    if (current == "" || current == "0") {
+      return 1;
+    }
+  };
+
+  var reset_to_1 = function () { return "reset:1"; };
+
   var regained = function (_) { return "regained"; };
   var consider = function (_) { return "consider"; };
 
@@ -27,12 +36,22 @@
   var long_and_short_rests = {longRest: regained, shortRest: regained};
 
   var resources = {
+    // Artificer
+    "flash of genius": only_long_rest,
+
     // Barbarian
     "rage": only_long_rest,
     "consult the spirits": only_long_rest,
 
     // Bard
     "bardic inspiration": {longRest: regained, shortRest: afterClassLevel("Bard", 5, "regained") },
+    "enthralling performance": long_and_short_rests,
+    "words of terror": long_and_short_rests,
+    "unbreakable majesty": long_and_short_rests,
+    "infectious inspiration": only_long_rest,
+    "mantle of majesty": only_long_rest,
+    "shadow lore": only_long_rest,
+    "universal speech": only_long_rest,
 
     // Cleric
     "channel divinity": long_and_short_rests,
@@ -40,19 +59,36 @@
     "warding flare": only_long_rest,
     "wrath of the storm": only_long_rest,
     "war priest": only_long_rest,
+    "war priest attack": only_long_rest,
+    "visions of the past": long_and_short_rests,
+    "embodiment of the law": only_long_rest,
+    "eyes of the grave": only_long_rest,
+    "sentinel at death's door": only_long_rest,
 
     // Druid
     "wild shape": long_and_short_rests,
     "natural recovery": only_long_rest,
+    "spirit totem": long_and_short_rests,
+    "balm of the summer court": only_long_rest,
+    "faithful summons": only_long_rest,
+    "fungal infestation": only_long_rest,
+    "hidden paths": only_long_rest,
+    "walker in dreams": only_long_rest,
 
     // Fighter
     "second wind": long_and_short_rests,
     "action surge": long_and_short_rests,
     "superiority dice": long_and_short_rests,
     "indomitable": only_long_rest,
+    "arcane shot": long_and_short_rests,
+    "fighting spirit": only_long_rest,
+    "strength before death": only_long_rest,
+    "unwavering mark": only_long_rest,
+    "warding maneuver": only_long_rest,
 
     // Monk
     "ki": long_and_short_rests,
+    "ki points": long_and_short_rests,
     "wholeness of body": only_long_rest,
 
     // Paladin
@@ -63,14 +99,30 @@
     "undying sentinel": only_long_rest,
     "elder champion": only_long_rest,
     "avenging angel": only_long_rest,
+    "dread lord": only_long_rest,
+    "emissary of redemption": only_long_rest,
+    "glorious defense": only_long_rest,
+    "invincible conqueror": only_long_rest,
+    "living legend": only_long_rest,
+
+    // Ranger
+    "detect portal": long_and_short_rests,
+    "ethereal step": long_and_short_rests,
+    "magic-user's nemesis": long_and_short_rests,
+    "hunters sense": only_long_rest,
 
     // Rogue
     "stroke of luck": long_and_short_rests,
     "spell thief": only_long_rest,
+    "unerring eye": only_long_rest,
 
     // Sorcerer
     "sorcery points": {longRest: regained, shortRest: afterClassLevel("Sorcerer", 20, 4)},
     "tides of chaos": only_long_rest,
+    "favored by the gods": long_and_short_rests,
+    "wind soul": long_and_short_rests,
+    "strength of the grave": only_long_rest,
+    "unearthly recovery": only_long_rest,
 
     // Warlock
     "hexblade’s curse": long_and_short_rests,
@@ -90,6 +142,13 @@
     "the third eye": long_and_short_rests,
     "illusory self": long_and_short_rests,
     "shapechanger": long_and_short_rests,
+    "bladesong": long_and_short_rests,
+    "arcane abeyance": long_and_short_rests,
+    "chronal shift": only_long_rest,
+    "event horizon": only_long_rest,
+    "momentary stasis": only_long_rest,
+    "power surge": {longRest: reset_to_1, shortRest: if_zero_then_1},
+    "violent attraction": only_long_rest,
 
     // Race abilities
     "breath weapon": only_long_rest, // Dragonborn
@@ -118,6 +177,7 @@
     "barkskin": fades_after_short_rest,
     "beacon of hope": fades_after_short_rest,
     "beast bond": fades_after_short_rest,
+    "bladesong": fades_after_short_rest,
     "bless": fades_after_short_rest,
     "catnap": fades_after_short_rest,
     "ceremony": fades_after_short_rest,
@@ -250,7 +310,7 @@
     var verb = "regained";
     var result;
     if (resources[lcname] && resources[lcname][restType]) {
-      result = resources[lcname][restType](charId);
+      result = resources[lcname][restType](charId, attr);
     } else if (name.endsWith('[s]') || (restType == "longRest" && name.endsWith('[l]'))) {
       name = name.substring(0, name.length-3);
       result = "regained";
@@ -281,6 +341,15 @@
     if (result == "consider") {
       if (value > 0) {
         suggestions.push("Consider using " + name + ".");
+      }
+      return;
+    }
+
+    if (`${result}`.startsWith("reset:")) {
+      var newVal = Number(result.substring(6));
+      if (value != newVal) {
+        attr.set({ current: newVal });
+        actions.push(`${name} reset to ${newVal}.`);
       }
       return;
     }
