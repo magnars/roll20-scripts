@@ -1,5 +1,16 @@
 /* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj, randomInteger */
 
+/* 5E Resting in Style
+ *
+ * Version 1.0.0
+ * Last updated: 2020-06-22
+ *
+ * This script for the 5E OGL character sheet solves the error prone task of
+ * updating your character sheet when resting. Using !long-rest and !short-rest
+ * commands will update your sheet, and report to you everything it is doing.
+ *
+ */
+
 (function () {
   var getClassLevel = function (charId, className) {
     var s = getAttrByName(charId, 'class_display');
