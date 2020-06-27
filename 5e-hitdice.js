@@ -55,8 +55,8 @@
       return;
     }
 
-    hd.set({ current: cur_hd - 1 });
-    hp.set({ current: Math.min(max_hp, cur_hp + result) });
+    hd.setWithWorker({ current: cur_hd - 1 });
+    hp.setWithWorker({ current: Math.min(max_hp, cur_hp + result) });
   };
 
   var isHitDiceMessage = function (msg) {
