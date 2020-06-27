@@ -1,9 +1,9 @@
-/* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj, randomInteger */
+/* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj, randomInteger, _ */
 
 /* 5E Resting in Style
  *
  * Version 1.0.0
- * Last updated: 2020-06-22
+ * Last updated: 2020-06-27
  *
  * This script for the 5E OGL character sheet solves the error prone task of
  * updating your character sheet when resting. Using !long-rest and !short-rest
@@ -288,8 +288,8 @@
     {slots: 4, level: 5},   // Warlock 20
   ];
 
-  function showStatus(msg) {
-    sendChat("Status", msg, null, {noarchive:true});
+  function showWarning(msg) {
+    sendChat("Warning", msg, null, {noarchive:true});
   }
 
   function resolveDice(txt) {
@@ -444,7 +444,7 @@
 
   function verifiedCurAndMax(token, attr, name) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") {
-      showStatus(name + " attribute on " + token.get("name") + " is missing or current/max values are not filled out, skipped.");
+      showWarning(name + " attribute on " + token.get("name") + " is missing or current/max values are not filled out, skipped.");
       return false;
     }
     return true;
@@ -594,30 +594,47 @@
     sendChat("Long rest for " + token.get("name"), msg);
   }
 
+  var selectSome = "Select the tokens that need rest, then run this command again.";
+
+  var withSelectedCharTokens = function (selected, f) {
+    if (!selected || !selected.length) {
+      return showWarning(selectSome);
+    }
+
+    var graphics = _.filter(selected, (sel) => sel._type == "graphic");
+    var tokens = _.map(graphics, (sel) => getObj(sel._type, sel._id));
+
+    if (!tokens || !tokens.length) {
+      return showWarning(selectSome);
+    }
+
+    var chars = _.filter(tokens, (token) => token && token.get("represents"));
+
+    if (!chars.length) {
+      return showWarning((selected.length == 1 ?
+                          "The selected token doesn't represent a character. " :
+                          "None of the selected tokens represent characters. ") +
+                         selectSome);
+    }
+
+    var ignored = (tokens.length - chars.length);
+    if (ignored > 0) {
+      log(ignored == 1 ?
+          "[Resting in Style] Ignoring one token that doesn't represent a character." :
+          "[Resting in Style] Ignoring " + ignored + " tokens that don't represent characters.");
+    }
+
+    chars.forEach(f);
+  };
+
   on("ready", () => {
     on("chat:message", msg => {
       if (msg.type !== 'api') { return; }
-      if (!msg.selected) { return; }
 
       var command = msg.content.split(" ")[0].toLowerCase();
 
-      if (command === '!short-rest') {
-        msg.selected.forEach(function (sel) {
-          if (sel._type == "graphic") {
-            var token = getObj(sel._type, sel._id);
-            if (token && token.get("represents")) { shortRest(token); }
-          }
-        });
-      }
-
-      if (command === '!long-rest') {
-        msg.selected.forEach(function (sel) {
-          if (sel._type == "graphic") {
-            var token = getObj(sel._type, sel._id);
-            if (token && token.get("represents")) { longRest(token); }
-          }
-        });
-      }
+      if (command === '!short-rest') { withSelectedCharTokens(msg.selected, shortRest); }
+      if (command === '!long-rest') { withSelectedCharTokens(msg.selected, longRest); }
     });
 
     log("5E OGL Resting in Style is ready! Select chars, then: !short-rest and !long-rest");
