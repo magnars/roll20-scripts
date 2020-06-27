@@ -481,7 +481,7 @@
     var cur_hp = Number(hp.get("current"));
     var cur_hd = Number(hd.get("current"));
 
-    if (cur_hp == 0) {
+    if (cur_hp < 1) {
       sendChat("Short rest for " + token.get("name"), "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
       return;
     }
@@ -542,7 +542,7 @@
     var max_hd = Number(hd.get("max"));
     var cur_hd = Number(hd.get("current"));
 
-    if (cur_hp == 0) {
+    if (cur_hp < 1) {
       sendChat("Long rest for " + token.get("name"), "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
       return;
     }
