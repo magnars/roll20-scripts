@@ -31,7 +31,7 @@
     };
   };
 
-  var if_zero_then_1 = function (charId, attr) {
+  var if_zero_then_inc = function (charId, attr) {
     var current = attr.get("current");
     if (current == "" || current == "0") {
       return 1;
@@ -170,7 +170,7 @@
     "Chronal Shift": only_long_rest,
     "Event Horizon": only_long_rest,
     "Momentary Stasis": only_long_rest,
-    "Power Surge": {longRest: reset_to_1, shortRest: if_zero_then_1},
+    "Power Surge": {longRest: reset_to_1, shortRest: if_zero_then_inc},
     "Violent Attraction": only_long_rest,
 
     // Race abilities
@@ -373,8 +373,9 @@
       return;
     }
 
+    var newVal;
     if (`${result}`.startsWith("reset:")) {
-      var newVal = Number(result.substring(6));
+      newVal = Number(result.substring(6));
       if (value != newVal) {
         attr.setWithWorker({ current: newVal });
         actions.push(`${name} reset to ${newVal}.`);
@@ -384,7 +385,7 @@
 
     if (result > 0) {
       if (value < max) {
-        var newVal = Math.min(max, value + result);
+        newVal = Math.min(max, value + result);
         attr.setWithWorker({ current: newVal });
         if (max == 1) {
           actions.push(`${name} ${verb}.`);
@@ -462,7 +463,7 @@
 
     var new_slots = toRegain == "regained" ? max_slots : Math.min(max_slots, cur_slots + toRegain);
 
-    if(cur_slots < new_slots) {
+    if (cur_slots < new_slots) {
       actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}→${new_slots}).`);
       charslot.setWithWorker({current: new_slots});
     }
@@ -492,7 +493,7 @@
     // Check hit points and hit dice
     var msg = cur_hp == max_hp ? "You are at full hit points." : `You are down ${max_hp - cur_hp} hit points`;
     if (cur_hp < max_hp) {
-      if (cur_hd == 0) {
+      if (cur_hd < 1) {
         msg += " with no hit dice left.";
       } else {
         suggestions.push(`Consider using hit dice (${cur_hd} left).`);
@@ -574,8 +575,8 @@
     }
 
     // Regain spell slots
-    for (var i = 1; i < 10; i++) {
-      regainSpellSlots(charId, i, "regained", actions);
+    for (var spellLevel = 1; spellLevel < 10; spellLevel++) {
+      regainSpellSlots(charId, spellLevel, "regained", actions);
     };
 
     // Regain resources
