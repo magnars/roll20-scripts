@@ -356,7 +356,7 @@
 
     if (result == "regained") {
       if (value < max) {
-        attr.set({ current: max });
+        attr.setWithWorker({ current: max });
         if (max == 1) {
           actions.push(`${name} ${verb}.`);
         } else {
@@ -376,7 +376,7 @@
     if (`${result}`.startsWith("reset:")) {
       var newVal = Number(result.substring(6));
       if (value != newVal) {
-        attr.set({ current: newVal });
+        attr.setWithWorker({ current: newVal });
         actions.push(`${name} reset to ${newVal}.`);
       }
       return;
@@ -385,7 +385,7 @@
     if (result > 0) {
       if (value < max) {
         var newVal = Math.min(max, value + result);
-        attr.set({ current: newVal });
+        attr.setWithWorker({ current: newVal });
         if (max == 1) {
           actions.push(`${name} ${verb}.`);
         } else {
@@ -464,7 +464,7 @@
 
     if(cur_slots < new_slots) {
       actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}→${new_slots}).`);
-      charslot.set({current: new_slots});
+      charslot.setWithWorker({current: new_slots});
     }
   }
 
@@ -553,14 +553,14 @@
     // Regain hit points
     var msg = cur_hp == max_hp ? "You are already at full hit points." : `You regain ${max_hp - cur_hp} hit points, back at full (${max_hp}).`;
     if (cur_hp < max_hp) {
-      hp.set({ current: max_hp });
+      hp.setWithWorker({ current: max_hp });
     }
 
     // Regain hit dice
     if(cur_hd < max_hd) {
       var new_hd = Math.min(max_hd, cur_hd + Math.max(1, Math.floor(max_hd/2)));
       actions.push(`${new_hd - cur_hd} hit dice regained (now ${new_hd}/${max_hd}).`);
-      hd.set({current: new_hd});
+      hd.setWithWorker({current: new_hd});
     }
 
     // Remove temporary hit points
@@ -569,7 +569,7 @@
       var cur_temp_hp = temp_hp.get("current")
       if (cur_temp_hp != "" && cur_temp_hp > 0) {
         actions.push(`${temp_hp.get("current")} temporary hit points removed.`);
-        temp_hp.set({current: ""});
+        temp_hp.setWithWorker({current: ""});
       }
     }
 
