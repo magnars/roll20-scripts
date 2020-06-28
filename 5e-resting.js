@@ -443,9 +443,9 @@
     })[0];
   }
 
-  function verifiedCurAndMax(token, attr, name) {
+  function verifiedCurAndMax(charName, attr, name) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") {
-      showWarning(name + " attribute on " + token.get("name") + " is missing or current/max values are not filled out, skipped.");
+      showWarning(name + " attribute on " + charName + " is missing or current/max values are not filled out, skipped.");
       return false;
     }
     return true;
@@ -469,21 +469,20 @@
     }
   }
 
-  function shortRest(token) {
-    var charId = token.get("represents");
-
+  function shortRest(charId) {
+    var charName = getAttrByName(charId, 'character_name');
     var hd = getAttr(charId, "hit_dice");
     var hp = getAttr(charId, "hp");
 
-    if (!verifiedCurAndMax(token, hd, 'Hit dice')) { return; }
-    if (!verifiedCurAndMax(token, hp, 'Hit points')) { return; }
+    if (!verifiedCurAndMax(charName, hd, 'Hit dice')) { return; }
+    if (!verifiedCurAndMax(charName, hp, 'Hit points')) { return; }
 
     var max_hp = Number(hp.get("max"));
     var cur_hp = Number(hp.get("current"));
     var cur_hd = Number(hd.get("current"));
 
     if (cur_hp < 1) {
-      sendChat("Short rest for " + token.get("name"), "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
+      sendChat("Short rest for " + charName, "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
       return;
     }
 
@@ -526,17 +525,16 @@
     if (points.length) {
       msg += "<ul><li>" + points.join("</li><li>") + "</li></ul>";
     }
-    sendChat("Short rest for " + token.get("name"), msg);
+    sendChat("Short rest for " + charName, msg);
   }
 
-  function longRest(token) {
-    var charId = token.get("represents");
-
+  function longRest(charId) {
+    var charName = getAttrByName(charId, 'character_name');
     var hd = getAttr(charId, "hit_dice");
     var hp = getAttr(charId, "hp");
 
-    if (!verifiedCurAndMax(token, hd, 'Hit dice')) { return; }
-    if (!verifiedCurAndMax(token, hp, 'Hit points')) { return; }
+    if (!verifiedCurAndMax(charName, hd, 'Hit dice')) { return; }
+    if (!verifiedCurAndMax(charName, hp, 'Hit points')) { return; }
 
     var max_hp = Number(hp.get("max"));
     var cur_hp = Number(hp.get("current"));
@@ -544,7 +542,7 @@
     var cur_hd = Number(hd.get("current"));
 
     if (cur_hp < 1) {
-      sendChat("Long rest for " + token.get("name"), "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
+      sendChat("Long rest for " + charName, "A character must have at least 1 hit point at the start of the rest to gain its benefits.<ul><li>Remember that a stable creature regains 1 hit point after 1d4 hours.</li></ul>");
       return;
     }
 
@@ -592,12 +590,12 @@
     if (points.length) {
       msg += "<ul><li>" + points.join("</li><li>") + "</li></ul>";
     }
-    sendChat("Long rest for " + token.get("name"), msg);
+    sendChat("Long rest for " + charName, msg);
   }
 
   var selectSome = "Select the tokens that need rest, then run this command again.";
 
-  var withSelectedCharTokens = function (selected, f) {
+  var withSelectedChars = function (selected, f) {
     if (!selected || !selected.length) {
       return showWarning(selectSome);
     }
@@ -609,23 +607,24 @@
       return showWarning(selectSome);
     }
 
-    var chars = _.filter(tokens, (token) => token && token.get("represents"));
+    var charTokens = _.filter(tokens, (token) => token && token.get("represents"));
 
-    if (!chars.length) {
+    if (!charTokens.length) {
       return showWarning((selected.length == 1 ?
                           "The selected token doesn't represent a character. " :
                           "None of the selected tokens represent characters. ") +
                          selectSome);
     }
 
-    var ignored = (tokens.length - chars.length);
+    var ignored = (tokens.length - charTokens.length);
     if (ignored > 0) {
       log(ignored == 1 ?
           "[Resting in Style] Ignoring one token that doesn't represent a character." :
           "[Resting in Style] Ignoring " + ignored + " tokens that don't represent characters.");
     }
 
-    chars.forEach(f);
+    var uniqueCharIds = [...new Set(charTokens.map((token) => token.get("represents")))];
+    uniqueCharIds.forEach(f);
   };
 
   on("ready", () => {
@@ -634,8 +633,8 @@
 
       var command = msg.content.split(" ")[0].toLowerCase();
 
-      if (command === '!short-rest') { withSelectedCharTokens(msg.selected, shortRest); }
-      if (command === '!long-rest') { withSelectedCharTokens(msg.selected, longRest); }
+      if (command === '!short-rest') { withSelectedChars(msg.selected, shortRest); }
+      if (command === '!long-rest') { withSelectedChars(msg.selected, longRest); }
     });
 
     log("5E OGL Resting in Style is ready! Select chars, then: !short-rest and !long-rest");
