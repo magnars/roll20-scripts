@@ -1,6 +1,20 @@
-/* global findObjs, log, sendChat, on, _ */
+/* global findObjs, log, sendChat, on, _, TokenMod */
 
 (function () {
+  let observers = { tokenChange: [] };
+
+  var observeTokenChange = function (handler) {
+    if (handler && _.isFunction(handler)) {
+      observers.tokenChange.push(handler);
+    }
+  };
+
+  var notifyObservers = function (event, obj, prev) {
+    _.each(observers[event], function (handler) {
+      handler(obj,prev);
+    });
+  };
+
   var sendRollTemplate = function (id, msg) {
     sendChat(
       id,
@@ -20,6 +34,17 @@
       characterid: charId,
       name: name
     }, { caseInsensitive: true })[0];
+  };
+
+  var findCharacterTokens = function (charId) {
+    return findObjs({
+      type: 'graphic',
+      represents: charId
+    });
+  };
+
+  var clone = function (o) {
+    return JSON.parse(JSON.stringify(o));
   };
 
   var handlehd = function (msg, character) {
@@ -55,8 +80,15 @@
       return;
     }
 
+    var tokens = findCharacterTokens(character.id);
+    var prevTokens = tokens.map(clone);
+
     hd.setWithWorker({ current: cur_hd - 1 });
     hp.setWithWorker({ current: Math.min(max_hp, cur_hp + result) });
+
+    for (var i = 0, l = tokens.length; i < l; i++) {
+      notifyObservers('tokenChange', tokens[i], prevTokens[i]);
+    }
   };
 
   var isHitDiceMessage = function (msg) {
@@ -67,19 +99,32 @@
       msg.content.indexOf("^{hit-dice-u}") > -1;
   };
 
-  on('chat:message', function (msg) {
-    if (isHitDiceMessage(msg)) {
-      var cname = msg.content.match(/charname=([^}]+)/)[1];
-      if (cname) {
-        var character = findObjs({ name: cname, type: 'character' })[0];
-        if (character) {
-          handlehd(msg, character);
+  setTimeout(function () {
+    if('undefined' !== typeof TokenMod && TokenMod.ObserveTokenChange) {
+      var original = TokenMod.ObserveTokenChange;
+      TokenMod.ObserveTokenChange = function (handler) {
+        original(handler);
+        observeTokenChange(handler);
+      };
+      warn('Piggiebacking on TokenMod for token change observations.');
+    };
+  }, 1);
+
+  on('ready', function () {
+    on('chat:message', function (msg) {
+      if (isHitDiceMessage(msg)) {
+        var cname = msg.content.match(/charname=([^}]+)/)[1];
+        if (cname) {
+          var character = findObjs({ name: cname, type: 'character' })[0];
+          if (character) {
+            handlehd(msg, character);
+          } else {
+            warn("FAILED to find character by name " + cname);
+          }
         } else {
-          warn("FAILED to find character by name " + cname);
+          warn("FAILED to extract charname from chat message.");
         }
-      } else {
-        warn("FAILED to extract charname from chat message.");
       }
-    }
+    });
   });
 }());

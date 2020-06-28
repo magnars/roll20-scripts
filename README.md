@@ -108,3 +108,8 @@ adding the [l] postfix to a resource box, like this:
 
 I would also like to support it out of the box somehow, but I'm not sure about
 the best way to do it.
+
+## Oddities
+
+For technical reasons, if you want DeathTracker to notice changes in hitpoints
+after resting, you must also install the TokenMod script.

@@ -1,4 +1,4 @@
-/* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj, randomInteger, _ */
+/* global log, getObj, on, getAttrByName, sendChat, findObjs, createObj, randomInteger, _, TokenMod */
 
 /* 5E Resting in Style
  *
@@ -288,9 +288,23 @@
     {slots: 4, level: 5},   // Warlock 20
   ];
 
-  function showWarning(msg) {
+  var showWarning = function (msg) {
     sendChat("Warning", msg, null, {noarchive:true});
-  }
+  };
+
+  let observers = { tokenChange: [] };
+
+  var observeTokenChange = function (handler) {
+    if (handler && _.isFunction(handler)) {
+      observers.tokenChange.push(handler);
+    }
+  };
+
+  var notifyObservers = function (event, obj, prev) {
+    _.each(observers[event], function (handler) {
+      handler(obj,prev);
+    });
+  };
 
   function resolveDice(txt) {
     const tokenize = /(\d+d\d+|\d+|\+|-)/ig;
@@ -432,6 +446,17 @@
       actions.push(name + " fades.");
     });
   }
+
+  var findCharacterTokens = function (charId) {
+    return findObjs({
+      type: 'graphic',
+      represents: charId
+    });
+  };
+
+  var clone = function (o) {
+    return JSON.parse(JSON.stringify(o));
+  };
 
   function getAttr(charId, name) {
     return findObjs({
@@ -627,14 +652,38 @@
     uniqueCharIds.forEach(f);
   };
 
+  var notifyAfter = function (f) {
+    return function (charId) {
+      var tokens = findCharacterTokens(charId);
+      var prevTokens = tokens.map(clone);
+
+      f(charId);
+
+      for (var i = 0, l = tokens.length; i < l; i++) {
+        notifyObservers('tokenChange', tokens[i], prevTokens[i]);
+      }
+    };
+  };
+
+  setTimeout(function () {
+    if('undefined' !== typeof TokenMod && TokenMod.ObserveTokenChange) {
+      var original = TokenMod.ObserveTokenChange;
+      TokenMod.ObserveTokenChange = function (handler) {
+        original(handler);
+        observeTokenChange(handler);
+      };
+      log('[Resting in Style] Piggiebacking on TokenMod for token change observations.');
+    };
+  }, 1);
+
   on("ready", () => {
     on("chat:message", msg => {
       if (msg.type !== 'api') { return; }
 
       var command = msg.content.split(" ")[0].toLowerCase();
 
-      if (command === '!short-rest') { withSelectedChars(msg.selected, shortRest); }
-      if (command === '!long-rest') { withSelectedChars(msg.selected, longRest); }
+      if (command === '!short-rest') { withSelectedChars(msg.selected, notifyAfter(shortRest)); }
+      if (command === '!long-rest') { withSelectedChars(msg.selected, notifyAfter(longRest)); }
     });
 
     log("5E OGL Resting in Style is ready! Select chars, then: !short-rest and !long-rest");
