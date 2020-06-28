@@ -12,7 +12,7 @@
  */
 
 (function () {
-  var getClassLevel = function (charId, className) {
+  const getClassLevel = function (charId, className) {
     var s = getAttrByName(charId, 'class_display');
     if (s) {
       var m = s.match(new RegExp(className + " (\\d+)"));
@@ -23,7 +23,7 @@
     return 0;
   };
 
-  var afterClassLevel = function (className, minLevel, result) {
+  const afterClassLevel = function (className, minLevel, result) {
     return function (charId) {
       if (minLevel <= getClassLevel(charId, className)) {
         return result;
@@ -31,26 +31,26 @@
     };
   };
 
-  var if_zero_then_inc = function (charId, attr) {
+  const if_zero_then_inc = function (charId, attr) {
     var current = attr.get("current");
     if (current == "" || current == "0") {
       return 1;
     }
   };
 
-  var reset_to_1 = function () { return "reset:1"; };
+  const reset_to_1 = function () { return "reset:1"; };
 
-  var regained = function (_) { return "regained"; };
-  var consider = function (_) { return "consider"; };
+  const regained = function (_) { return "regained"; };
+  const consider = function (_) { return "consider"; };
 
-  var only_long_rest = {longRest: regained};
-  var long_and_short_rests = {longRest: regained, shortRest: regained};
+  const only_long_rest = {longRest: regained};
+  const long_and_short_rests = {longRest: regained, shortRest: regained};
 
-  var normalize = function (s) {
+  const normalize = function (s) {
     return s.toLowerCase().replace(/[^a-z ]+/g, "");
   };
 
-  var normalizeMapKeys = function (m) {
+  const normalizeMapKeys = function (m) {
     Object.keys(m).forEach(function(k) {
       var v = m[k];
       delete m[k];
@@ -58,7 +58,7 @@
     });
   };
 
-  var resources = {
+  const resources = {
     // Artificer
     "Flash of Genius": only_long_rest,
 
@@ -190,11 +190,11 @@
 
   normalizeMapKeys(resources);
 
-  var fades = function (_) { return "fades"; };
-  var fades_after_long_rest = {longRest: fades};
-  var fades_after_short_rest = {longRest: fades, shortRest: fades};
+  const fades = function (_) { return "fades"; };
+  const fades_after_long_rest = {longRest: fades};
+  const fades_after_short_rest = {longRest: fades, shortRest: fades};
 
-  var modifiers = {
+  const modifiers = {
     // spells
     "Aid": fades_after_long_rest,
     "Armor of Agathys": fades_after_short_rest,
@@ -264,7 +264,7 @@
 
   normalizeMapKeys(modifiers);
 
-  var warlockPactMagic = [
+  const warlockPactMagic = [
     null,                   // Warlock 0
     {slots: 1, level: 1},   // Warlock 1
     {slots: 2, level: 1},   // Warlock 2
@@ -288,25 +288,25 @@
     {slots: 4, level: 5},   // Warlock 20
   ];
 
-  var showWarning = function (msg) {
+  const showWarning = function (msg) {
     sendChat("Warning", msg, null, {noarchive:true});
   };
 
   let observers = { tokenChange: [] };
 
-  var observeTokenChange = function (handler) {
+  const observeTokenChange = function (handler) {
     if (handler && _.isFunction(handler)) {
       observers.tokenChange.push(handler);
     }
   };
 
-  var notifyObservers = function (event, obj, prev) {
+  const notifyObservers = function (event, obj, prev) {
     _.each(observers[event], function (handler) {
       handler(obj,prev);
     });
   };
 
-  function resolveDice(txt) {
+  const resolveDice = function (txt) {
     const tokenize = /(\d+d\d+|\d+|\+|-)/ig;
     const dieparts = /^(\d+)?d(\d+)$/i;
     const ops = {
@@ -328,7 +328,7 @@
     }, 0);
   }
 
-  function checkModifier(charId, attr, faded, restType) {
+  const checkModifier = function (charId, attr, faded, restType) {
     if (!attr || attr.get("current") === "") { return; }
     var name = getAttrByName(charId, attr.get('name').replace("_active_flag", "_name"));
     if (!name) { return; }
@@ -340,9 +340,9 @@
       faded.push(name);
       attr.setWithWorker({ current: "0" });
     }
-  }
+  };
 
-  function checkResource(charId, attr, actions, suggestions, restType) {
+  const checkResource = function (charId, attr, actions, suggestions, restType) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") { return; }
 
     var name = getAttrByName(charId, attr.get('name') + '_name');
@@ -409,9 +409,9 @@
       }
       return;
     }
-  }
+  };
 
-  function findResourceAttrs(charId) {
+  const findResourceAttrs = function (charId) {
     return findObjs({
       type: 'attribute',
       characterid: charId
@@ -421,9 +421,9 @@
         name === 'other_resource' ||
         name.startsWith('repeating_resource_') && !name.endsWith('_name');
     });
-  }
+  };
 
-  function findModifierAttrs(charId) {
+  const findModifierAttrs = function (charId) {
     return findObjs({
       type: 'attribute',
       characterid: charId
@@ -435,9 +435,9 @@
         (name.startsWith('repeating_skillmod_') && name.endsWith('_global_skill_active_flag')) ||
         (name.startsWith('repeating_damagemod_') && name.endsWith('_global_damage_active_flag'));
     });
-  }
+  };
 
-  function fadeBuffs(charId, actions, restType) {
+  const fadeBuffs = function (charId, actions, restType) {
     var faded = [];
     findModifierAttrs(charId).forEach(function (attr) {
       checkModifier(charId, attr, faded, restType);
@@ -445,20 +445,20 @@
     [...new Set(faded)].forEach(function (name) {
       actions.push(name + " fades.");
     });
-  }
+  };
 
-  var findCharacterTokens = function (charId) {
+  const findCharacterTokens = function (charId) {
     return findObjs({
       type: 'graphic',
       represents: charId
     });
   };
 
-  var clone = function (o) {
+  const clone = function (o) {
     return JSON.parse(JSON.stringify(o));
   };
 
-  function getAttr(charId, name) {
+  const getAttr = function (charId, name) {
     return findObjs({
       type: 'attribute',
       characterid: charId,
@@ -466,17 +466,17 @@
     }, {
       caseInsensitive: true
     })[0];
-  }
+  };
 
-  function verifiedCurAndMax(charName, attr, name) {
+  const verifiedCurAndMax = function (charName, attr, name) {
     if (!attr || attr.get("current") === "" || attr.get("max") === "") {
       showWarning(name + " attribute on " + charName + " is missing or current/max values are not filled out, skipped.");
       return false;
     }
     return true;
-  }
+  };
 
-  function regainSpellSlots(charId, spellLevel, toRegain, actions) {
+  const regainSpellSlots = function (charId, spellLevel, toRegain, actions) {
     var charslotmax = getAttr(charId, "lvl" + spellLevel + "_slots_total");
     var charslot = getAttr(charId, "lvl" + spellLevel + "_slots_expended");
 
@@ -492,9 +492,9 @@
       actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}→${new_slots}).`);
       charslot.setWithWorker({current: new_slots});
     }
-  }
+  };
 
-  function shortRest(charId) {
+  const shortRest = function (charId) {
     var charName = getAttrByName(charId, 'character_name');
     var hd = getAttr(charId, "hit_dice");
     var hp = getAttr(charId, "hp");
@@ -551,9 +551,9 @@
       msg += "<ul><li>" + points.join("</li><li>") + "</li></ul>";
     }
     sendChat("Short rest for " + charName, msg);
-  }
+  };
 
-  function longRest(charId) {
+  const longRest = function (charId) {
     var charName = getAttrByName(charId, 'character_name');
     var hd = getAttr(charId, "hit_dice");
     var hp = getAttr(charId, "hp");
@@ -616,11 +616,11 @@
       msg += "<ul><li>" + points.join("</li><li>") + "</li></ul>";
     }
     sendChat("Long rest for " + charName, msg);
-  }
+  };
 
-  var selectSome = "Select the tokens that need rest, then run this command again.";
+  const selectSome = "Select the tokens that need rest, then run this command again.";
 
-  var withSelectedChars = function (selected, f) {
+  const withSelectedChars = function (selected, f) {
     if (!selected || !selected.length) {
       return showWarning(selectSome);
     }
@@ -652,7 +652,7 @@
     uniqueCharIds.forEach(f);
   };
 
-  var notifyAfter = function (f) {
+  const notifyAfter = function (f) {
     return function (charId) {
       var tokens = findCharacterTokens(charId);
       var prevTokens = tokens.map(clone);

@@ -3,19 +3,19 @@
 (function () {
   let observers = { tokenChange: [] };
 
-  var observeTokenChange = function (handler) {
+  const observeTokenChange = function (handler) {
     if (handler && _.isFunction(handler)) {
       observers.tokenChange.push(handler);
     }
   };
 
-  var notifyObservers = function (event, obj, prev) {
+  const notifyObservers = function (event, obj, prev) {
     _.each(observers[event], function (handler) {
       handler(obj,prev);
     });
   };
 
-  var sendRollTemplate = function (id, msg) {
+  const sendRollTemplate = function (id, msg) {
     sendChat(
       id,
       "<div class='sheet-rolltemplate-simple'><div class='sheet-container'><div class='sheet-label' style='padding:5px 10px;'><span>" +
@@ -24,11 +24,11 @@
     );
   };
 
-  var warn = function (msg) {
+  const warn = function (msg) {
     log("[5e-hitdice]: " + msg);
   };
 
-  var getAttr = function (charId, name) {
+  const getAttr = function (charId, name) {
     return findObjs({
       type: 'attribute',
       characterid: charId,
@@ -36,18 +36,18 @@
     }, { caseInsensitive: true })[0];
   };
 
-  var findCharacterTokens = function (charId) {
+  const findCharacterTokens = function (charId) {
     return findObjs({
       type: 'graphic',
       represents: charId
     });
   };
 
-  var clone = function (o) {
+  const clone = function (o) {
     return JSON.parse(JSON.stringify(o));
   };
 
-  var handlehd = function (msg, character) {
+  const handlehd = function (msg, character) {
     var hd = getAttr(character.id, "hit_dice");
     var hp = getAttr(character.id, "hp");
     var name = character.get("name");
@@ -91,7 +91,7 @@
     }
   };
 
-  var isHitDiceMessage = function (msg) {
+  const isHitDiceMessage = function (msg) {
     return msg.playerid.toLowerCase() != "api" &&
       msg.rolltemplate &&
       ["simple"].indexOf(msg.rolltemplate) > -1 &&
