@@ -494,6 +494,27 @@
     }
   };
 
+  const reduceExhaustionLevel = function (charId, exhaustionAttr, actions) {
+    var exhaustionLevel = exhaustionAttr.get("current")
+    if (exhaustionLevel != "" && exhaustionLevel > 0) {
+      var lostDescriptionAttr = getAttr(charId, "exhaustion_" + exhaustionLevel);
+      var lostDescription = lostDescriptionAttr && lostDescriptionAttr.get("current");
+      lostDescription = lostDescription && lostDescription.substr(2) + " no longer.";
+
+      var newLevel = Number(exhaustionLevel) - 1;
+      actions.push(`Exhaustion level reduced to ${newLevel}. ${lostDescription}`);
+      exhaustionAttr.set({current: newLevel});
+
+      if (lostDescriptionAttr) {
+        if (newLevel == 0) {
+          lostDescriptionAttr.set({current: getAttrByName(charId, 'exhaustion_0')});
+        } else {
+          lostDescriptionAttr.set({current: ''});
+        }
+      }
+    }
+  };
+
   const shortRest = function (charId) {
     var charName = getAttrByName(charId, 'character_name');
     var hd = getAttr(charId, "hit_dice");
@@ -606,6 +627,12 @@
     findResourceAttrs(charId).forEach(function (attr) {
       checkResource(charId, attr, actions, suggestions, 'longRest');
     });
+
+    // Reduce exhaustion level
+    var exhaustionAttr = getAttr(charId, "exhaustion_level");
+    if (exhaustionAttr) {
+      reduceExhaustionLevel(charId, exhaustionAttr, actions);
+    }
 
     // Fade buffs
     fadeBuffs(charId, actions, 'longRest');
