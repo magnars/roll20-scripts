@@ -156,6 +156,7 @@
     "Dark Delirium": long_and_short_rests,
     "Dark One's Own Luck": long_and_short_rests,
     "Hurl Through Hell": only_long_rest,
+    "Healing Light": only_long_rest,
     "Entropic Ward": long_and_short_rests,
 
     // Wizard
