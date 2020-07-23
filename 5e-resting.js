@@ -375,7 +375,7 @@
         if (max == 1) {
           actions.push(`${name} ${verb}.`);
         } else {
-          actions.push(`${name} ${verb} (${value}→${max}).`);
+          actions.push(`${name} ${verb} (${value}&#8594;${max}).`);
         }
       }
       return;
@@ -405,7 +405,7 @@
         if (max == 1) {
           actions.push(`${name} ${verb}.`);
         } else {
-          actions.push(`${name} ${verb} (${value}→${newVal}).`);
+          actions.push(`${name} ${verb} (${value}&#8594;${newVal}).`);
         }
       }
       return;
@@ -490,7 +490,7 @@
     var new_slots = toRegain == "regained" ? max_slots : Math.min(max_slots, cur_slots + toRegain);
 
     if (cur_slots < new_slots) {
-      actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}→${new_slots}).`);
+      actions.push(`Level ${spellLevel} spell slots regained (${cur_slots}&#8594;${new_slots}).`);
       charslot.setWithWorker({current: new_slots});
     }
   };
