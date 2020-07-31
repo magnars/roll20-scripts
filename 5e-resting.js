@@ -2,8 +2,8 @@
 
 /* 5E Resting in Style
  *
- * Version 1.2.0
- * Last updated: 2020-07-23
+ * Version 1.2.1
+ * Last updated: 2020-07-31
  *
  * This script for the 5E OGL character sheet solves the error prone task of
  * updating your character sheet when resting. Using !long-rest and !short-rest
