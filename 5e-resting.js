@@ -175,7 +175,7 @@
     "Violent Attraction": only_long_rest,
 
     // Race abilities
-    "Breath Weapon": only_long_rest, // Dragonborn
+    "Breath Weapon": long_and_short_rests, // Dragonborn
     "Relentless Endurance": only_long_rest, // Half-orc
     "Grovel, Cower, and Beg": long_and_short_rests, // Kobold
     "Healing Hands": only_long_rest, // Aasimar
